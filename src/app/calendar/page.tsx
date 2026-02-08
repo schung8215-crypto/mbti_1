@@ -81,6 +81,7 @@ export default function CalendarPage() {
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
   const [selectedDay, setSelectedDay] = useState<SelectedDay | null>(null);
+  const [reflectionDates, setReflectionDates] = useState<Set<string>>(new Set());
 
   const todayDate = useMemo(() => new Date(), []);
 
@@ -97,6 +98,13 @@ export default function CalendarPage() {
       birthElement: user.birthElement,
       birthYinYang: user.birthYinYang,
     });
+
+    try {
+      const stored = localStorage.getItem("mbti-saju-reflections");
+      if (stored) {
+        setReflectionDates(new Set(Object.keys(JSON.parse(stored))));
+      }
+    } catch { /* ignore */ }
   }, [router]);
 
   // Calculate all days in the current month
@@ -285,6 +293,8 @@ export default function CalendarPage() {
               {/* Day cells */}
               {monthDays.map((dayInfo) => {
                 const today = isToday(dayInfo.day);
+                const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(dayInfo.day).padStart(2, "0")}`;
+                const hasReflection = reflectionDates.has(dateKey);
                 return (
                   <button
                     key={dayInfo.day}
@@ -299,14 +309,17 @@ export default function CalendarPage() {
                     <span className={`text-sm font-medium ${today ? "text-violet-700" : "text-warm-700"}`}>
                       {dayInfo.day}
                     </span>
-                    <div className={`w-1.5 h-1.5 rounded-full ${getEnergyColor(dayInfo.energyLevel)}`} />
+                    <div className="flex items-center gap-0.5">
+                      <div className={`w-1.5 h-1.5 rounded-full ${getEnergyColor(dayInfo.energyLevel)}`} />
+                      {hasReflection && <div className="w-1.5 h-1.5 rounded-full bg-violet-500" />}
+                    </div>
                   </button>
                 );
               })}
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-5 mt-4 pt-4 border-t border-warm-100">
+            <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-warm-100 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-sage-400" />
                 <span className="text-xs text-warm-500">Favorable</span>
@@ -318,6 +331,10 @@ export default function CalendarPage() {
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
                 <span className="text-xs text-warm-500">Challenging</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-violet-500" />
+                <span className="text-xs text-warm-500">Saved</span>
               </div>
             </div>
           </div>
