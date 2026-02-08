@@ -146,20 +146,9 @@ export default function Home() {
       {/* Header */}
       <header className="px-6 pt-6 pb-4">
         <div className="max-w-md mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-warm-900 tracking-tight">
-              innergy
-            </h1>
-            <button
-              onClick={() => router.push("/about")}
-              className="w-8 h-8 rounded-full bg-warm-200 hover:bg-warm-300 flex items-center justify-center transition-colors"
-              aria-label="How it works"
-            >
-              <svg className="w-4 h-4 text-warm-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </button>
-          </div>
+          <h1 className="text-xl font-bold text-warm-900 tracking-tight">
+            innergy
+          </h1>
           <span className="text-xs font-semibold text-violet-600 px-3 py-1.5 rounded-full bg-white shadow-soft">
             {userData.mbtiType}
           </span>
