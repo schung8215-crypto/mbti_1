@@ -155,7 +155,7 @@ export default function Home() {
               className="w-8 h-8 rounded-full bg-warm-200 hover:bg-warm-300 flex items-center justify-center transition-colors"
               aria-label="How it works"
             >
-              <svg className="w-4.5 h-4.5 text-warm-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4 text-warm-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </button>
