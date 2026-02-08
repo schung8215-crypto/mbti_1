@@ -304,7 +304,11 @@ export default function CalendarPage() {
                     </span>
                     <div className="flex items-center gap-0.5">
                       <div className={`w-1.5 h-1.5 rounded-full ${getEnergyColor(dayInfo.energyLevel)}`} />
-                      {hasReflection && <div className="w-1.5 h-1.5 rounded-full bg-violet-500" />}
+                      {hasReflection && (
+                        <svg className="w-2 h-2 text-red-400" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      )}
                     </div>
                   </button>
                 );
@@ -326,7 +330,9 @@ export default function CalendarPage() {
                 <span className="text-xs text-warm-500">Challenging</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-violet-500" />
+                <svg className="w-2.5 h-2.5 text-red-400" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
                 <span className="text-xs text-warm-500">Saved</span>
               </div>
             </div>
