@@ -178,22 +178,7 @@ export default function Home() {
       {/* Main content */}
       <div className="px-4 md:px-6">
         <div className="max-w-md mx-auto">
-          <DailyCard message={dailyMessage} />
-
-          {/* Save / Bookmark button */}
-          <button
-            onClick={handleSaveButtonTap}
-            className={`w-full mt-3 py-2.5 px-4 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold transition-all ${
-              isSaved
-                ? "bg-violet-100 text-violet-700 shadow-soft"
-                : "bg-white text-warm-500 shadow-soft hover:shadow-medium"
-            }`}
-          >
-            <svg className="w-4.5 h-4.5" fill={isSaved ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            {isSaved ? "Saved" : "Save Today's Reflection"}
-          </button>
+          <DailyCard message={dailyMessage} isSaved={isSaved} onSaveTap={handleSaveButtonTap} />
 
           {/* Compatibility Check */}
           <button

@@ -5,6 +5,8 @@ import EnergyMeter from "./EnergyMeter";
 
 interface DailyCardProps {
   message: DailyMessage;
+  isSaved?: boolean;
+  onSaveTap?: () => void;
 }
 
 const elementIcons: Record<string, { icon: string; bg: string }> = {
@@ -30,7 +32,7 @@ const animalIcons: Record<string, string> = {
   Pig: "🐷",
 };
 
-export default function DailyCard({ message }: DailyCardProps) {
+export default function DailyCard({ message, isSaved, onSaveTap }: DailyCardProps) {
   const element = elementIcons[message.todayElement] || elementIcons.Earth;
   const animal = animalIcons[message.todayAnimal] || "🐲";
 
@@ -41,7 +43,20 @@ export default function DailyCard({ message }: DailyCardProps) {
         <div className="flex items-start justify-between mb-4">
           <div>
             <p className="text-violet-200 text-sm font-medium">{message.greeting}</p>
-            <p className="text-white/80 text-xs mt-0.5">{message.date}</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="text-white/80 text-xs">{message.date}</p>
+              {onSaveTap && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onSaveTap(); }}
+                  className="flex items-center gap-1 text-white/70 hover:text-white transition-colors"
+                >
+                  <svg className="w-3.5 h-3.5" fill={isSaved ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  <span className="text-xs">{isSaved ? "Saved" : "Save"}</span>
+                </button>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full ${element.bg}`}>
