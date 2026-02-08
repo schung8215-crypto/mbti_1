@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import BottomNav from "@/components/BottomNav";
 
 interface Reflection {
   date: string;
@@ -100,28 +101,19 @@ export default function ReflectionsPage() {
   };
 
   return (
-    <main className="min-h-screen pb-8">
+    <main className="min-h-screen pb-20">
       {/* Header */}
       <header className="px-6 pt-6 pb-4">
         <div className="max-w-md mx-auto">
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-2 text-warm-600 hover:text-warm-800 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            <span className="text-sm font-medium">Home</span>
-          </button>
+          <h1 className="text-xl font-bold text-warm-900 tracking-tight">My Reflections</h1>
         </div>
       </header>
 
       <div className="px-4 md:px-6">
         <div className="max-w-md mx-auto">
-          {/* Title */}
+          {/* Subtitle */}
           <div className="mb-6">
-            <h1 className="text-2xl font-bold text-warm-900">My Reflections</h1>
-            <p className="text-sm text-warm-500 mt-1">
+            <p className="text-sm text-warm-500">
               {sortedDates.length > 0
                 ? `${sortedDates.length} saved insight${sortedDates.length === 1 ? "" : "s"}`
                 : "Your saved insights will appear here"}
@@ -354,6 +346,8 @@ export default function ReflectionsPage() {
           </div>
         </div>
       </div>
+
+      <BottomNav />
     </main>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DailyCard from "@/components/DailyCard";
+import BottomNav from "@/components/BottomNav";
 import { generateDailyMessage, DailyMessage } from "@/lib/message-generator";
 import { getTodayPillar, calculateUserBirthPillar } from "@/lib/bazi";
 
@@ -141,7 +142,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen pb-8">
+    <main className="min-h-screen pb-20">
       {/* Header */}
       <header className="px-6 pt-6 pb-4">
         <div className="max-w-md mx-auto flex items-center justify-between">
@@ -159,19 +160,9 @@ export default function Home() {
               </svg>
             </button>
           </div>
-          <button
-            onClick={() => router.push("/profile")}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white shadow-soft hover:shadow-medium transition-shadow"
-          >
-            <span className="text-xs font-semibold text-violet-600">
-              {userData.mbtiType}
-            </span>
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center">
-              <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-          </button>
+          <span className="text-xs font-semibold text-violet-600 px-3 py-1.5 rounded-full bg-white shadow-soft">
+            {userData.mbtiType}
+          </span>
         </div>
       </header>
 
@@ -179,63 +170,6 @@ export default function Home() {
       <div className="px-4 md:px-6">
         <div className="max-w-md mx-auto">
           <DailyCard message={dailyMessage} isSaved={isSaved} onSaveTap={handleSaveButtonTap} />
-
-          {/* Compatibility Check */}
-          <button
-            onClick={() => router.push("/compatibility")}
-            className="w-full mt-4 bg-white rounded-2xl shadow-soft hover:shadow-medium transition-shadow p-4 flex items-center gap-3"
-          >
-            <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-            </div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-warm-900">Compatibility Check</p>
-              <p className="text-xs text-warm-500">See how you match with someone</p>
-            </div>
-            <svg className="w-5 h-5 text-warm-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Energy Calendar */}
-          <button
-            onClick={() => router.push("/calendar")}
-            className="w-full mt-3 bg-white rounded-2xl shadow-soft hover:shadow-medium transition-shadow p-4 flex items-center gap-3"
-          >
-            <div className="w-10 h-10 bg-sage-100 rounded-xl flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-sage-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-warm-900">Energy Calendar</p>
-              <p className="text-xs text-warm-500">Track your energy patterns over time</p>
-            </div>
-            <svg className="w-5 h-5 text-warm-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* My Reflections */}
-          <button
-            onClick={() => router.push("/reflections")}
-            className="w-full mt-3 bg-white rounded-2xl shadow-soft hover:shadow-medium transition-shadow p-4 flex items-center gap-3"
-          >
-            <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-            </div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-warm-900">My Reflections</p>
-              <p className="text-xs text-warm-500">Look back on your saved insights</p>
-            </div>
-            <svg className="w-5 h-5 text-warm-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
         </div>
       </div>
 
@@ -305,12 +239,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="mt-8 text-center">
-        <p className="text-xs text-warm-400">
-          Your daily insight refreshes at midnight
-        </p>
-      </footer>
+      <BottomNav />
     </main>
   );
 }

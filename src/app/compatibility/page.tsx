@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import BottomNav from "@/components/BottomNav";
 import { calculateUserBirthPillar } from "@/lib/bazi";
 import { generateCompatibilityReport, CompatibilityReport } from "@/lib/compatibility";
 import { MBTI_DESCRIPTIONS } from "@/content/mbti-descriptions";
@@ -150,19 +151,11 @@ export default function CompatibilityPage() {
     const partnerElColor = elementColors[partnerElement] || elementColors.Earth;
 
     return (
-      <main className="min-h-screen pb-8">
+      <main className="min-h-screen pb-20">
         {/* Header */}
         <header className="px-6 pt-6 pb-4">
           <div className="max-w-md mx-auto">
-            <button
-              onClick={() => router.push("/")}
-              className="flex items-center gap-2 text-warm-600 hover:text-warm-800 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span className="text-sm font-medium">Home</span>
-            </button>
+            <h1 className="text-xl font-bold text-warm-900 tracking-tight">Compatibility</h1>
           </div>
         </header>
 
@@ -395,6 +388,8 @@ export default function CompatibilityPage() {
             </button>
           </div>
         </div>
+
+        <BottomNav />
       </main>
     );
   }
@@ -408,29 +403,17 @@ export default function CompatibilityPage() {
   const userDesc = MBTI_DESCRIPTIONS[userData.mbtiType];
 
   return (
-    <main className="min-h-screen pb-8">
+    <main className="min-h-screen pb-20">
       {/* Header */}
       <header className="px-6 pt-6 pb-4">
         <div className="max-w-md mx-auto">
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-2 text-warm-600 hover:text-warm-800 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            <span className="text-sm font-medium">Home</span>
-          </button>
+          <h1 className="text-xl font-bold text-warm-900 tracking-tight">Compatibility</h1>
+          <p className="text-warm-500 text-sm mt-1">See how your energies align</p>
         </div>
       </header>
 
       <div className="px-4 md:px-6">
         <div className="max-w-md mx-auto space-y-4">
-          {/* Title */}
-          <div className="text-center mb-2">
-            <h1 className="text-xl font-bold text-warm-900">Compatibility Check</h1>
-            <p className="text-warm-500 text-sm mt-1">See how your energies align</p>
-          </div>
 
           {/* You section */}
           <div className="bg-white rounded-3xl shadow-soft p-6 animate-fade-in">
@@ -530,6 +513,8 @@ export default function CompatibilityPage() {
           </button>
         </div>
       </div>
+
+      <BottomNav />
     </main>
   );
 }

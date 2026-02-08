@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import BottomNav from "@/components/BottomNav";
 import { MBTI_DESCRIPTIONS } from "@/content/mbti-descriptions";
 import { calculateUserBirthPillar } from "@/lib/bazi";
 
@@ -170,19 +171,11 @@ export default function ProfilePage() {
   zodiacAnimal = zodiacAnimal || "Dragon";
 
   return (
-    <main className="min-h-screen pb-8">
+    <main className="min-h-screen pb-20">
       {/* Header */}
       <header className="px-6 pt-6 pb-4">
         <div className="max-w-md mx-auto">
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-2 text-warm-600 hover:text-warm-800 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            <span className="text-sm font-medium">Back</span>
-          </button>
+          <h1 className="text-xl font-bold text-warm-900 tracking-tight">Profile</h1>
         </div>
       </header>
 
@@ -342,6 +335,8 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      <BottomNav />
     </main>
   );
 }
