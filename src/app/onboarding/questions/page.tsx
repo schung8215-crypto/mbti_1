@@ -49,7 +49,7 @@ export default function OnboardingQuestionsPage() {
       }
       setCurrentQuestion(currentQuestion - 1);
     } else {
-      router.push("/onboarding/intro");
+      router.back();
     }
   };
 

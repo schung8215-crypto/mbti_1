@@ -3,7 +3,7 @@
 // CORRECTED - No "cosmic" language, proper brand positioning
 // Hip daily ritual, not mystical
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createBrowserClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 
@@ -46,6 +46,18 @@ export default function LoginScreen() {
   const router = useRouter()
   const [loading, setLoading] = useState<'apple' | 'google' | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // Redirect signed-in users away from login page
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') return
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) router.replace('/today')
+    })
+  }, [router])
 
   // Dev bypass — skip OAuth entirely in local development
   if (process.env.NODE_ENV === 'development') {
@@ -147,6 +159,29 @@ export default function LoginScreen() {
           zIndex: 10,
         }}
       >
+        {/* Back button */}
+        <button
+          onClick={() => router.back()}
+          style={{
+            alignSelf: 'flex-start',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            color: '#8a7e78',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: 14,
+            fontFamily: 'inherit',
+            padding: '0 0 24px 0',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+
         {/* App Icon */}
         <div
           style={{
