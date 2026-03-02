@@ -1,0 +1,105 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { MBTI_DESCRIPTIONS } from "@/content/mbti-descriptions";
+
+interface MbtiPending {
+  mbtiType: string;
+  mbtiTitle: string;
+  scores: Record<string, number>;
+}
+
+export default function OnboardingResultsPage() {
+  const router = useRouter();
+  const [pending, setPending] = useState<MbtiPending | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("mbti-pending");
+    if (!stored) {
+      router.replace("/onboarding/intro");
+      return;
+    }
+    try {
+      setPending(JSON.parse(stored));
+    } catch {
+      router.replace("/onboarding/intro");
+    }
+  }, [router]);
+
+  if (!pending) return null;
+
+  const description = MBTI_DESCRIPTIONS[pending.mbtiType];
+  if (!description) {
+    router.replace("/onboarding/intro");
+    return null;
+  }
+
+  return (
+    <main className="min-h-screen flex flex-col justify-center p-4 py-8" style={{ background: '#f5f3ef' }}>
+      <div className="w-full max-w-md mx-auto space-y-3 animate-slide-up">
+
+        {/* Card 1 — Personality result */}
+        <div className="bg-white rounded-3xl shadow-soft overflow-hidden">
+          <div className="px-6 py-5 text-center relative" style={{ background: '#c67d5c' }}>
+            <button
+              onClick={() => router.push('/onboarding/questions')}
+              className="absolute top-4 left-4 flex items-center gap-1 text-white/60 hover:text-white transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="text-sm">Back</span>
+            </button>
+            <p className="text-white/70 text-xs mb-1">You are</p>
+            <h1 className="text-3xl font-bold text-white mb-0.5">{description.type}</h1>
+            <p className="text-base text-white/90">{description.title}</p>
+          </div>
+
+          <div className="p-5">
+            <p className="text-warm-700 leading-relaxed text-sm">{description.summary}</p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              {description.strengths.map((strength, i) => (
+                <span key={i} className="px-3 py-1 bg-terracotta-50 text-terracotta-600 rounded-full text-xs font-medium">
+                  {strength}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2 — Next step CTA */}
+        <div className="rounded-3xl shadow-soft overflow-hidden" style={{ background: '#faf8f5' }}>
+          <div className="p-5 space-y-4">
+            <div>
+              <p className="font-bold text-warm-900 text-base">Your personality type is just the beginning.</p>
+              <p className="text-warm-500 text-sm mt-1">Add your birth date to see how your profile interacts with today's energy.</p>
+            </div>
+
+            <ul className="space-y-2">
+              {[
+                "Your Saju profile — element, animal sign, and yin/yang",
+                "Daily insights shaped by your type, birth stem, and the 60-day cycle",
+                "Compatibility based on both personality and elemental dynamics",
+              ].map((text, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-warm-700">
+                  <span className="mt-1.5 w-1 h-1 rounded-full bg-terracotta-300 flex-shrink-0" />
+                  <span className="leading-relaxed">{text}</span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              onClick={() => router.push('/auth/login')}
+              className="w-full py-3 px-6 rounded-2xl font-semibold text-white transition-all"
+              style={{ background: '#c67d5c' }}
+            >
+              Create Free Account
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  );
+}

@@ -30,7 +30,7 @@ export const STEM_INTERACTIONS: Record<string, string> = {
   // YANG FIRE (丙) PERSON - 10 interactions
   "丙-甲": "Today's bold growth fuels your passionate nature. You have extra energy to burn, and your enthusiasm finds fresh fuel at every turn.",
   "丙-乙": "Today's flexible growth supports your intensity. You're well-resourced for action, and your fire has sustainable fuel to carry you through.",
-  "丙-丙": "Your radiant energy meets its match. You're burning at maximum brightness. This is your day to lead, perform, and shine without hesitation.",
+  "丙-丙": "Your radiant energy meets its match. You're operating at peak intensity. This is your day to lead, perform, and shine without hesitation.",
   "丙-丁": "Your bold warmth meets a refined glow. You have both intensity and sustainability — balance your blaze with lasting heat for the best results.",
   "丙-戊": "Your passion creates something solid today. What excites you can become tangible — your energy builds real foundations that will last.",
   "丙-己": "Your intensity nurtures growth today. Your warmth cultivates real results, and what you care about flourishes under your attention.",
@@ -108,7 +108,7 @@ export const STEM_INTERACTIONS: Record<string, string> = {
   "壬-己": "Today's cultivation shapes your current. Gentle structure guides your depth — you're flowing within supportive banks that bring out your best.",
   "壬-庚": "Today's sharp clarity is enriched by your depth. Your intuition gains structure, and powerful instinct meets precise thinking in a rare alignment.",
   "壬-辛": "Today's refined precision channels your flow. You're giving depth an elegant form — intuition becomes beautifully, surprisingly actionable.",
-  "壬-壬": "Your powerful intuition is at peak depth. You're reading currents others can't see — trust your instincts completely, because they're exceptionally strong now.",
+  "壬-壬": "Your powerful intuition is at peak depth. You're noticing what others overlook — trust your instincts completely, because they're exceptionally strong now.",
   "壬-癸": "Your deep flow meets gentle reflection. You have both power and subtlety at work — balance strong currents with quiet knowing for the clearest path forward.",
 
   // YIN WATER (癸) PERSON - 10 interactions

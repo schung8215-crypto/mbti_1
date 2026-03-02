@@ -54,7 +54,7 @@ export default function ReflectionsPage() {
   useEffect(() => {
     const storedUser = localStorage.getItem("mbti-saju-user");
     if (!storedUser) {
-      router.push("/onboarding");
+      router.push("/onboarding/intro");
       return;
     }
     setReflections(loadReflections());
@@ -130,10 +130,10 @@ export default function ReflectionsPage() {
               </div>
               <h2 className="text-lg font-semibold text-warm-800 mb-2">No reflections yet</h2>
               <p className="text-sm text-warm-500 leading-relaxed">
-                Save your first daily insight from the home page
+                Save your first daily insight from today
               </p>
               <button
-                onClick={() => router.push("/")}
+                onClick={() => router.push("/today")}
                 className="mt-5 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-semibold transition-colors"
               >
                 Go to Home

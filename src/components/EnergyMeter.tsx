@@ -4,31 +4,22 @@ interface EnergyMeterProps {
   label: string;
   value: number;
   maxValue?: number;
-  variant?: "violet" | "sage" | "amber";
+  variant?: "terracotta" | "amber" | "sage";
 }
 
-const variantStyles = {
-  violet: {
-    filled: "bg-violet-500",
-    empty: "bg-warm-200",
-  },
-  sage: {
-    filled: "bg-sage-500",
-    empty: "bg-warm-200",
-  },
-  amber: {
-    filled: "bg-amber-400",
-    empty: "bg-warm-200",
-  },
+const variantColors = {
+  terracotta: { filled: "#c67d5c", empty: "#ebe7e2" },
+  amber:      { filled: "#d9934a", empty: "#ebe7e2" },
+  sage:       { filled: "#5d8b78", empty: "#ebe7e2" },
 };
 
 export default function EnergyMeter({
   label,
   value,
   maxValue = 5,
-  variant = "violet",
+  variant = "terracotta",
 }: EnergyMeterProps) {
-  const styles = variantStyles[variant];
+  const colors = variantColors[variant];
 
   return (
     <div className="flex items-center gap-3">
@@ -37,9 +28,13 @@ export default function EnergyMeter({
         {Array.from({ length: maxValue }).map((_, i) => (
           <div
             key={i}
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-              i < value ? styles.filled : styles.empty
-            }`}
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: i < value ? colors.filled : colors.empty,
+              transition: 'background-color 0.3s',
+            }}
           />
         ))}
       </div>

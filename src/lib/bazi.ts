@@ -1,4 +1,5 @@
 import { BaziCalculator } from "@aharris02/bazi-calculator-by-alvamind";
+import solarTerms from "./solar-term.json";
 
 export interface Pillar {
   stem: string;
@@ -76,11 +77,21 @@ function isValidDate(year: number, month: number, day: number): boolean {
 const ZODIAC_ANIMALS = ["Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"];
 
 /**
- * Simple year-based zodiac animal lookup (does not account for Chinese New Year cutoff).
- * Used as a fallback when the library is unavailable.
+ * Zodiac animal lookup using 입춘 (Ipchun, start of spring ~Feb 4) as the year boundary,
+ * as per Korean Saju tradition.
  */
-function getZodiacAnimalByYear(year: number): string {
-  return ZODIAC_ANIMALS[((year - 4) % 12 + 12) % 12];
+function getZodiacAnimalBySaju(year: number, month: number, day: number): string {
+  const yearData = (solarTerms as Record<string, { data: Record<string, string> }>)[String(year)];
+  let effectiveYear = year;
+  if (yearData?.data?.start_of_spring) {
+    const ipchun = new Date(yearData.data.start_of_spring);
+    const birth = new Date(year, month - 1, day);
+    if (birth < ipchun) effectiveYear = year - 1;
+  } else {
+    // Fallback: 입춘 is almost always Feb 4
+    if (month === 1 || (month === 2 && day < 4)) effectiveYear = year - 1;
+  }
+  return ZODIAC_ANIMALS[((effectiveYear - 4) % 12 + 12) % 12];
 }
 
 export function calculateUserBirthPillar(
@@ -100,7 +111,7 @@ export function calculateUserBirthPillar(
       birthBranch: fallback.branch,
       birthElement: fallback.element,
       birthYinYang: fallback.yinYang,
-      birthAnimal: getZodiacAnimalByYear(year || 2000),
+      birthAnimal: getZodiacAnimalBySaju(year || 2000, month || 1, day || 1),
       yearStem: "",
       yearBranch: "",
     };
@@ -144,7 +155,7 @@ export function calculateUserBirthPillar(
     const stemInfo = STEM_ELEMENTS[dayStem];
 
     // Year pillar animal is the zodiac animal people commonly know
-    const yearAnimal = pillars.year?.animal || getZodiacAnimalByYear(year);
+    const yearAnimal = getZodiacAnimalBySaju(year, month, day);
     const yearStem = pillars.year?.chinese?.[0] || "";
     const yearBranch = pillars.year?.chinese?.[1] || "";
 
@@ -168,7 +179,7 @@ export function calculateUserBirthPillar(
       birthBranch: fallback.branch,
       birthElement: fallback.element,
       birthYinYang: fallback.yinYang,
-      birthAnimal: getZodiacAnimalByYear(year),
+      birthAnimal: getZodiacAnimalBySaju(year, month, day),
       yearStem: "",
       yearBranch: "",
     };

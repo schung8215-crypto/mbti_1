@@ -89,7 +89,7 @@ export default function CalendarPage() {
   useEffect(() => {
     const storedUser = localStorage.getItem("mbti-saju-user");
     if (!storedUser) {
-      router.push("/onboarding");
+      router.push("/onboarding/intro");
       return;
     }
     const user = JSON.parse(storedUser);
@@ -142,6 +142,21 @@ export default function CalendarPage() {
 
     return days;
   }, [userData, currentYear, currentMonth]);
+
+  // Dominant element for the month
+  const dominantElement = useMemo(() => {
+    if (monthDays.length === 0) return null;
+    const counts: Record<string, number> = {};
+    for (const d of monthDays) {
+      counts[d.pillar.element] = (counts[d.pillar.element] || 0) + 1;
+    }
+    let max = 0;
+    let dominant = "";
+    for (const [el, count] of Object.entries(counts)) {
+      if (count > max) { max = count; dominant = el; }
+    }
+    return dominant;
+  }, [monthDays]);
 
   // First day of month offset (0 = Sunday)
   const firstDayOffset = useMemo(
@@ -211,7 +226,7 @@ export default function CalendarPage() {
   if (!userData) {
     return (
       <main className="min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-3 border-violet-200 border-t-violet-500 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-3 border-terracotta-200 border-t-terracotta-500 rounded-full animate-spin" />
       </main>
     );
   }
@@ -222,6 +237,11 @@ export default function CalendarPage() {
       <header className="px-6 pt-6 pb-4">
         <div className="max-w-md mx-auto">
           <h1 className="text-xl font-bold text-warm-900 tracking-tight">Energy Calendar</h1>
+          {dominantElement && (
+            <p className="text-sm text-warm-500 mt-1">
+              {MONTH_NAMES[currentMonth]} is a {dominantElement}-heavy month for you {elementIcons[dominantElement]}
+            </p>
+          )}
         </div>
       </header>
 
@@ -260,7 +280,7 @@ export default function CalendarPage() {
               <div className="flex justify-center mb-4">
                 <button
                   onClick={handleToday}
-                  className="text-xs font-medium text-violet-600 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-full transition-colors"
+                  className="text-xs font-medium text-terracotta-500 bg-terracotta-50 hover:bg-terracotta-100 px-3 py-1.5 rounded-full transition-colors"
                 >
                   Today
                 </button>
@@ -293,47 +313,53 @@ export default function CalendarPage() {
                     key={dayInfo.day}
                     onClick={() => handleDayTap(dayInfo)}
                     className={`
-                      aspect-square rounded-xl flex flex-col items-center justify-center gap-0.5 transition-all
-                      ${today ? "ring-2 ring-violet-500 ring-offset-1" : ""}
+                      aspect-square rounded-xl flex flex-col items-center justify-center gap-0 transition-all relative
+                      ${today ? "ring-2 ring-terracotta-500 ring-offset-1" : ""}
                       ${getEnergyBg(dayInfo.energyLevel)}
                       hover:scale-105 active:scale-95
                     `}
                   >
-                    <span className={`text-sm font-medium ${today ? "text-violet-700" : "text-warm-700"}`}>
+                    <span className={`text-[11px] font-medium ${today ? "text-terracotta-600" : "text-warm-700"}`}>
                       {dayInfo.day}
                     </span>
-                    <div className="flex items-center gap-0.5">
-                      <div className={`w-1.5 h-1.5 rounded-full ${getEnergyColor(dayInfo.energyLevel)}`} />
-                      {hasReflection && (
-                        <svg className="w-2 h-2 text-red-400" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
-                      )}
-                    </div>
+                    <span className="text-xs leading-none">{elementIcons[dayInfo.pillar.element]}</span>
+                    {hasReflection && (
+                      <svg className="w-2 h-2 text-red-400 absolute bottom-0.5 right-0.5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    )}
                   </button>
                 );
               })}
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-warm-100 flex-wrap">
+            <div className="flex items-center justify-center gap-3 mt-4 pt-4 border-t border-warm-100 flex-wrap">
+              {Object.entries(elementIcons).map(([el, icon]) => (
+                <div key={el} className="flex items-center gap-1">
+                  <span className="text-xs">{icon}</span>
+                  <span className="text-[10px] text-warm-500">{el}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-center gap-4 mt-2 flex-wrap">
               <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-sage-400" />
-                <span className="text-xs text-warm-500">Favorable</span>
+                <div className="w-2 h-2 rounded-sm bg-sage-50 border border-sage-200" />
+                <span className="text-[10px] text-warm-500">Favorable</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                <span className="text-xs text-warm-500">Neutral</span>
+                <div className="w-2 h-2 rounded-sm bg-amber-50 border border-amber-200" />
+                <span className="text-[10px] text-warm-500">Neutral</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                <span className="text-xs text-warm-500">Challenging</span>
+                <div className="w-2 h-2 rounded-sm bg-red-50 border border-red-200" />
+                <span className="text-[10px] text-warm-500">Challenging</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <svg className="w-2.5 h-2.5 text-red-400" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <span className="text-xs text-warm-500">Saved</span>
+                <span className="text-[10px] text-warm-500">Saved</span>
               </div>
             </div>
           </div>
@@ -380,7 +406,7 @@ export default function CalendarPage() {
                   </div>
 
                   <p className="text-violet-500 text-2xl mb-3">&#x1F52E;</p>
-                  <p className="text-xs font-semibold text-violet-500 uppercase tracking-wider mb-4">Energy Forecast</p>
+                  <p className="text-xs font-semibold text-terracotta-500 uppercase tracking-wider mb-4">Energy Forecast</p>
 
                   <p className="text-sm text-warm-500 mb-1">{formattedDate}</p>
 
@@ -461,7 +487,7 @@ export default function CalendarPage() {
                             <div
                               key={i}
                               className={`w-2.5 h-2.5 rounded-full ${
-                                i < selectedDay.energyLevel ? "bg-violet-500" : "bg-warm-200"
+                                i < selectedDay.energyLevel ? "bg-terracotta-500" : "bg-warm-200"
                               }`}
                             />
                           ))}
@@ -522,8 +548,8 @@ export default function CalendarPage() {
                     {/* View Full Reading — only for today */}
                     {isToday(selectedDay.day) && (
                       <button
-                        onClick={() => router.push("/")}
-                        className="w-full mt-5 py-3 px-4 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-600 text-sm font-semibold transition-colors"
+                        onClick={() => router.push("/today")}
+                        className="w-full mt-5 py-3 px-4 rounded-xl bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-500 text-sm font-semibold transition-colors"
                       >
                         View Full Reading
                       </button>

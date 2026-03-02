@@ -10,7 +10,7 @@ interface DailyCardProps {
 }
 
 const elementIcons: Record<string, { icon: string; bg: string }> = {
-  Wood: { icon: "🌿", bg: "bg-green-500/20" },
+  Wood: { icon: "🌳", bg: "bg-green-500/20" },
   Fire: { icon: "🔥", bg: "bg-red-500/20" },
   Earth: { icon: "⛰️", bg: "bg-amber-500/20" },
   Metal: { icon: "✨", bg: "bg-slate-400/20" },
@@ -38,12 +38,12 @@ export default function DailyCard({ message, isSaved, onSaveTap }: DailyCardProp
 
   return (
     <div className="animate-fade-in">
-      {/* Header card */}
-      <div className="bg-gradient-to-br from-violet-500 via-violet-600 to-violet-700 rounded-3xl p-6 mb-4 shadow-glow">
+      {/* Header card — solid terracotta */}
+      <div className="rounded-3xl p-6 mb-4 shadow-glow" style={{ background: '#c67d5c' }}>
         <div className="flex items-start justify-between mb-4">
           <div>
-            <p className="text-violet-200 text-sm font-medium">{message.greeting}</p>
-            <p className="text-white/80 text-xs mt-0.5">{message.date}</p>
+            <p className="text-white/80 text-sm font-medium">{message.greeting}</p>
+            <p className="text-white/60 text-xs mt-0.5">{message.date}</p>
           </div>
           <div className="flex items-center gap-2">
             <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full ${element.bg}`}>
@@ -77,8 +77,8 @@ export default function DailyCard({ message, isSaved, onSaveTap }: DailyCardProp
                 onClick={onSaveTap}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                   isSaved
-                    ? "bg-violet-100 text-violet-700"
-                    : "border border-warm-200 text-warm-500 hover:border-violet-300 hover:text-violet-600"
+                    ? "bg-terracotta-50 text-terracotta-600"
+                    : "border border-warm-200 text-warm-500 hover:border-terracotta-300 hover:text-terracotta-500"
                 }`}
               >
                 <svg className="w-3.5 h-3.5" fill={isSaved ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -96,7 +96,7 @@ export default function DailyCard({ message, isSaved, onSaveTap }: DailyCardProp
             <EnergyMeter
               label="Energy"
               value={message.energyLevel}
-              variant="violet"
+              variant="amber"
             />
             <EnergyMeter
               label="Luck"

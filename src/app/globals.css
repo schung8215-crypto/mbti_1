@@ -3,10 +3,16 @@
 @tailwind utilities;
 
 :root {
-  --background: #faf9f7;
-  --foreground: #2d2a26;
+  --background: #f5f3ef;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --foreground: #2d2520;
   --card: #ffffff;
-  --muted: #6b6660;
+  --muted: #8a7e78;
+  --border: #ede8e3;
+  --terracotta: #c67d5c;
+  --terracotta-light: #fef6f0;
+  --terracotta-border: #f4e8dd;
 }
 
 * {
@@ -15,6 +21,8 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -37,17 +45,17 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ddd7cf;
+  background: #e8c9b5;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c4bbb0;
+  background: #d9a88d;
 }
 
-/* Focus styles */
+/* Focus styles — terracotta */
 :focus-visible {
-  outline: 2px solid #9b7bc8;
+  outline: 2px solid #c67d5c;
   outline-offset: 2px;
 }
 
@@ -81,12 +89,8 @@ input[type="number"] {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {

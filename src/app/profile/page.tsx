@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
 import { MBTI_DESCRIPTIONS } from "@/content/mbti-descriptions";
 import { calculateUserBirthPillar } from "@/lib/bazi";
+import { generateTagline } from "@/lib/tagline";
+import CelebrityMatches from "@/components/CelebrityMatches";
 
 interface UserData {
   mbtiType: string;
@@ -18,6 +20,7 @@ interface UserData {
   birthAnimal?: string;
   yearStem?: string;
   yearBranch?: string;
+  tagline?: string;
 }
 
 const elementColors: Record<string, { bg: string; text: string; gradient: string; tagBg: string }> = {
@@ -29,13 +32,13 @@ const elementColors: Record<string, { bg: string; text: string; gradient: string
 };
 
 const elementIcons: Record<string, string> = {
-  Wood: "\u{1F33F}", Fire: "\u{1F525}", Earth: "\u26F0\uFE0F", Metal: "\u2728", Water: "\u{1F4A7}",
+  Wood: "🌳", Fire: "🔥", Earth: "⛰️", Metal: "✨", Water: "💧",
 };
 
 const animalIcons: Record<string, string> = {
-  Rat: "\u{1F400}", Ox: "\u{1F402}", Tiger: "\u{1F405}", Rabbit: "\u{1F407}",
-  Dragon: "\u{1F432}", Snake: "\u{1F40D}", Horse: "\u{1F434}", Goat: "\u{1F410}",
-  Monkey: "\u{1F435}", Rooster: "\u{1F413}", Dog: "\u{1F415}", Pig: "\u{1F437}",
+  Rat: "🐀", Ox: "🐂", Tiger: "🐅", Rabbit: "🐇",
+  Dragon: "🐲", Snake: "🐍", Horse: "🐴", Goat: "🐐",
+  Monkey: "🐵", Rooster: "🐓", Dog: "🐕", Pig: "🐷",
 };
 
 const elementDescriptions: Record<string, { traits: string; strengths: string[] }> = {
@@ -76,14 +79,34 @@ const animalDescriptions: Record<string, { traits: string; strengths: string[] }
   Pig: { traits: "Generous and compassionate, the Pig brings warmth and sincerity. You enjoy life's pleasures and have a big heart for helping others.", strengths: ["Generous", "Compassionate", "Sincere", "Easygoing"] },
 };
 
+const mbtiDimensions: Record<string, { E?: number; I?: number; N?: number; S?: number; T?: number; F?: number; J?: number; P?: number }> = {
+  "ENFP": { E: 65, N: 70, F: 75, P: 80 },
+  "INFP": { I: 70, N: 75, F: 80, P: 70 },
+  "ENFJ": { E: 70, N: 65, F: 75, J: 70 },
+  "INFJ": { I: 75, N: 80, F: 70, J: 75 },
+  "ENTP": { E: 65, N: 75, T: 70, P: 75 },
+  "INTP": { I: 80, N: 80, T: 75, P: 70 },
+  "ENTJ": { E: 70, N: 70, T: 80, J: 75 },
+  "INTJ": { I: 75, N: 75, T: 80, J: 80 },
+  "ESFP": { E: 75, S: 70, F: 65, P: 75 },
+  "ISFP": { I: 70, S: 65, F: 75, P: 70 },
+  "ESFJ": { E: 70, S: 65, F: 70, J: 70 },
+  "ISFJ": { I: 65, S: 70, F: 75, J: 75 },
+  "ESTP": { E: 75, S: 75, T: 65, P: 70 },
+  "ISTP": { I: 70, S: 70, T: 75, P: 75 },
+  "ESTJ": { E: 65, S: 70, T: 70, J: 80 },
+  "ISTJ": { I: 75, S: 75, T: 70, J: 80 },
+};
+
 export default function ProfilePage() {
   const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("mbti-saju-user");
     if (!storedUser) {
-      router.push("/onboarding");
+      router.push("/onboarding/intro");
       return;
     }
     setUserData(JSON.parse(storedUser));
@@ -92,7 +115,7 @@ export default function ProfilePage() {
   const handleReset = () => {
     if (confirm("Are you sure you want to reset your profile? You'll need to take the test again.")) {
       localStorage.removeItem("mbti-saju-user");
-      router.push("/onboarding");
+      router.push("/onboarding/intro");
     }
   };
 
@@ -102,6 +125,7 @@ export default function ProfilePage() {
 
   const mbtiDescription = MBTI_DESCRIPTIONS[userData.mbtiType];
   const elStyle = elementColors[userData.birthElement] || elementColors.Earth;
+  const dimensions = mbtiDimensions[userData.mbtiType] || {};
 
   let zodiacAnimal = userData.birthAnimal;
   let yearStem = userData.yearStem;
@@ -114,73 +138,175 @@ export default function ProfilePage() {
   }
   zodiacAnimal = zodiacAnimal || "Dragon";
 
+  // Always recompute tagline fresh (legacy users may have 2-factor stored tagline)
+  const { tagline: freshTagline } = generateTagline(
+    userData.mbtiType,
+    userData.birthYinYang,
+    userData.birthElement,
+    zodiacAnimal
+  );
+
+  const handleShareProfile = async () => {
+    const elIcon = elementIcons[userData.birthElement] || "";
+    const anIcon = animalIcons[zodiacAnimal] || "";
+    const title = mbtiDescription?.title || userData.mbtiType;
+
+    try {
+      setIsGenerating(true);
+      const { generateProfileCard } = await import("@/lib/generate-profile-card");
+
+      const mbtiTraits = mbtiDescription?.strengths || [];
+      const elTraits = elementDescriptions[userData.birthElement]?.strengths || [];
+      const anTraits = animalDescriptions[zodiacAnimal]?.strengths || [];
+      const allTraits = Array.from(new Set([...mbtiTraits, ...elTraits, ...anTraits])).slice(0, 8);
+
+      const blob = await generateProfileCard({
+        mbtiType: userData.mbtiType,
+        tagline: userData.tagline || mbtiDescription?.summary?.split('.')[0] || title,
+        yinYang: userData.birthYinYang,
+        element: userData.birthElement,
+        elementEmoji: elIcon,
+        animal: zodiacAnimal,
+        animalEmoji: anIcon,
+        traits: allTraits,
+      });
+
+      const file = new File([blob], "haru-profile.png", { type: "image/png" });
+
+      if (navigator.share && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "My Haru Profile",
+          text: `I'm ${userData.mbtiType} · ${userData.birthYinYang} ${userData.birthElement} · ${zodiacAnimal}`,
+        });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "haru-profile.png";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Share failed:", error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
-    <main className="min-h-screen pb-20">
-      {/* Hero header */}
-      <div className="bg-gradient-to-br from-violet-500 via-violet-600 to-violet-700 px-6 pt-8 pb-16 relative overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/3 -translate-x-1/4" />
-
-        <div className="max-w-md mx-auto text-center relative z-10">
-          <div className="w-24 h-24 bg-white/15 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-glow animate-fade-in">
-            <span className="text-white font-bold text-3xl tracking-wide">{userData.mbtiType}</span>
+    <main className="min-h-screen bg-warm-50 pb-24">
+      <div className="max-w-md mx-auto">
+        {/* Hero Section */}
+        <div className="relative pt-8 pb-8 px-6 overflow-hidden" style={{ background: 'linear-gradient(135deg, #c67d5c 0%, #5a8a7a 100%)' }}>
+          {/* Soft background blobs */}
+          <div className="absolute inset-0 opacity-15">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full blur-3xl" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1 animate-fade-in">
-            {mbtiDescription?.title || userData.mbtiType}
-          </h1>
-          <p className="text-violet-200 text-sm animate-fade-in">
-            {userData.birthYinYang} {userData.birthElement} {elementIcons[userData.birthElement]} &middot; {zodiacAnimal} {animalIcons[zodiacAnimal]}
-          </p>
-        </div>
-      </div>
 
-      {/* Cards — overlap the header */}
-      <div className="px-4 md:px-6 -mt-8">
-        <div className="max-w-md mx-auto space-y-4">
+          {/* Settings button */}
+          <button
+            onClick={() => router.push("/settings")}
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full"
+            style={{ background: 'rgba(255,255,255,0.18)' }}
+            aria-label="Settings"
+          >
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
 
-          {/* Birth Chart card */}
-          <div className="bg-white rounded-3xl shadow-medium p-5 animate-slide-up">
-            <h2 className="text-xs font-semibold text-warm-400 uppercase tracking-wider mb-4">Birth Chart</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {/* Day Pillar */}
-              <div className={`rounded-2xl bg-gradient-to-br ${elStyle.gradient} p-4 text-center`}>
-                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-wider mb-2">Day Pillar</p>
-                <p className="text-white text-2xl font-bold tracking-wider mb-1">{userData.birthStem} {userData.birthBranch}</p>
-                <p className="text-white/80 text-xs font-medium">
-                  {elementIcons[userData.birthElement]} {userData.birthYinYang} {userData.birthElement}
-                </p>
-              </div>
-              {/* Year Pillar */}
-              <div className="rounded-2xl bg-gradient-to-br from-violet-500 to-violet-600 p-4 text-center">
-                <p className="text-white/70 text-[10px] font-semibold uppercase tracking-wider mb-2">Year Pillar</p>
-                <p className="text-white text-2xl font-bold tracking-wider mb-1">
-                  {yearStem && yearBranch ? `${yearStem} ${yearBranch}` : "\u2014"}
-                </p>
-                <p className="text-white/80 text-xs font-medium">
-                  {animalIcons[zodiacAnimal]} {zodiacAnimal}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-center gap-3 mt-4 pt-3 border-t border-warm-100">
-              <span className="text-warm-500 text-xs">Born</span>
-              <span className="text-warm-800 text-sm font-semibold">
-                {userData.birthYear}.{String(userData.birthMonth).padStart(2, "0")}.{String(userData.birthDay).padStart(2, "0")}
+          {/* Content */}
+          <div className="relative text-center">
+            {/* Label */}
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.10em', textTransform: 'uppercase', marginBottom: 10 }}>
+              ✦ Your Haru Archetype
+            </p>
+
+            {/* Tagline — hero */}
+            <h1
+              className="text-white text-center mx-auto mb-5"
+              style={{ fontFamily: 'Georgia, serif', fontWeight: 700, fontSize: 26, lineHeight: 1.3, maxWidth: 300 }}
+            >
+              {freshTagline}
+            </h1>
+
+            {/* Three equal pills: MBTI · Element · Animal */}
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              <span style={{ fontSize: 12, fontWeight: 700, color: 'white', background: 'rgba(255,255,255,0.18)', borderRadius: 20, padding: '5px 13px', letterSpacing: '0.04em' }}>
+                {userData.mbtiType}
+              </span>
+              <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12 }}>·</span>
+              <span style={{ fontSize: 12, fontWeight: 500, color: 'white', background: 'rgba(255,255,255,0.18)', borderRadius: 20, padding: '5px 13px' }}>
+                {elementIcons[userData.birthElement]} {userData.birthYinYang} {userData.birthElement}
+              </span>
+              <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: 12 }}>·</span>
+              <span style={{ fontSize: 12, fontWeight: 500, color: 'white', background: 'rgba(255,255,255,0.18)', borderRadius: 20, padding: '5px 13px' }}>
+                {animalIcons[zodiacAnimal]} {zodiacAnimal}
               </span>
             </div>
           </div>
+        </div>
 
-          {/* Element card */}
-          <div className="bg-white rounded-3xl shadow-soft p-6 animate-slide-up">
+        {/* Birth Date Section */}
+        <div className="bg-white px-6 py-4 border-b border-warm-100">
+          <div className="text-center">
+            <p className="text-xs text-warm-500 uppercase tracking-wide mb-1">Born</p>
+            <p className="text-base font-semibold text-warm-900 mb-1">
+              {new Date(userData.birthYear, userData.birthMonth - 1, userData.birthDay).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric"
+              })}
+            </p>
+            <p className="text-sm text-warm-600">
+              {userData.birthStem} {userData.birthBranch} (Day) · {yearStem} {yearBranch} (Year)
+            </p>
+          </div>
+        </div>
+
+        <div className="px-4 py-6 space-y-4">
+          {/* Cosmic Identity */}
+          <div>
+            <h2 className="text-xs font-semibold text-warm-400 uppercase tracking-wider mb-3 px-2">
+              Your Saju Profile
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {/* Your Element (Day Stem) */}
+              <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-warm-100 hover:border-terracotta-200 transition-colors text-center">
+                <div className="text-[10px] font-semibold text-warm-400 uppercase tracking-wider mb-2">
+                  Your Element
+                </div>
+                <div className="text-3xl font-bold text-warm-800 mb-1">{userData.birthStem}</div>
+                <div className="text-sm font-semibold text-warm-700">{userData.birthYinYang} {userData.birthElement}</div>
+                <div className="text-[10px] text-warm-500">Day Stem</div>
+              </div>
+
+              {/* Your Animal (Year Branch) */}
+              <div className="bg-white rounded-2xl p-4 shadow-soft border-2 border-warm-100 hover:border-terracotta-200 transition-colors text-center">
+                <div className="text-[10px] font-semibold text-warm-400 uppercase tracking-wider mb-2">
+                  Your Animal
+                </div>
+                <div className="text-3xl font-bold text-warm-800 mb-1">{yearBranch || "—"}</div>
+                <div className="text-sm font-semibold text-warm-700">{zodiacAnimal}</div>
+                <div className="text-[10px] text-warm-500">Year Branch</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Birth Element */}
+          <div className="bg-white rounded-3xl shadow-soft p-6">
             <h2 className="text-xs font-semibold text-warm-400 uppercase tracking-wider mb-4">
               Your Birth Element
             </h2>
             <div className="flex items-center gap-4 mb-4">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${elStyle.gradient} flex items-center justify-center shadow-soft`}>
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-soft" style={{ background: '#5a8a7a' }}>
                 <span className="text-3xl">{elementIcons[userData.birthElement]}</span>
               </div>
               <div>
-                <p className={`font-bold text-lg ${elStyle.text}`}>
+                <p className="font-bold text-lg" style={{ color: '#5a8a7a' }}>
                   {userData.birthYinYang} {userData.birthElement}
                 </p>
                 <p className="text-warm-500 text-sm">
@@ -193,24 +319,24 @@ export default function ProfilePage() {
             </p>
             <div className="flex flex-wrap gap-2">
               {elementDescriptions[userData.birthElement]?.strengths.map((s, i) => (
-                <span key={i} className={`px-3 py-1.5 rounded-full text-xs font-semibold ${elStyle.tagBg} ${elStyle.text}`}>
+                <span key={i} className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: '#eef4f2', border: '1px solid #c5ddd8', color: '#5a8a7a' }}>
                   {s}
                 </span>
               ))}
             </div>
           </div>
 
-          {/* Zodiac Animal card */}
-          <div className="bg-white rounded-3xl shadow-soft p-6 animate-slide-up">
+          {/* Zodiac Animal */}
+          <div className="bg-white rounded-3xl shadow-soft p-6">
             <h2 className="text-xs font-semibold text-warm-400 uppercase tracking-wider mb-4">
               Your Zodiac Animal
             </h2>
             <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center shadow-soft">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-soft" style={{ background: '#7c6b9e' }}>
                 <span className="text-3xl">{animalIcons[zodiacAnimal]}</span>
               </div>
               <div>
-                <p className="font-bold text-lg text-violet-700">{zodiacAnimal}</p>
+                <p className="font-bold text-lg" style={{ color: '#7c6b9e' }}>{zodiacAnimal}</p>
                 <p className="text-warm-500 text-sm">Year of the {zodiacAnimal}</p>
               </div>
             </div>
@@ -219,86 +345,169 @@ export default function ProfilePage() {
             </p>
             <div className="flex flex-wrap gap-2">
               {animalDescriptions[zodiacAnimal]?.strengths.map((s, i) => (
-                <span key={i} className="px-3 py-1.5 rounded-full text-xs font-semibold bg-violet-50 border border-violet-200 text-violet-700">
+                <span key={i} className="px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: '#f3f0f8', border: '1px solid #d8ceed', color: '#7c6b9e' }}>
                   {s}
                 </span>
               ))}
             </div>
           </div>
 
-          {/* MBTI card */}
+          {/* MBTI - Enhanced with Dimensions */}
           {mbtiDescription && (
-            <div className="bg-white rounded-3xl shadow-soft p-6 animate-slide-up">
+            <div className="bg-white rounded-3xl shadow-soft p-6">
               <h2 className="text-xs font-semibold text-warm-400 uppercase tracking-wider mb-4">
-                About Your Type
+                Your Personality
               </h2>
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sage-400 to-sage-600 flex items-center justify-center shadow-soft">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-soft" style={{ background: '#c67d5c' }}>
                   <span className="font-bold text-xl text-white">{userData.mbtiType}</span>
                 </div>
                 <div>
-                  <p className="font-bold text-lg text-sage-700">{mbtiDescription.title}</p>
+                  <p className="font-bold text-lg text-terracotta-600">{mbtiDescription.title}</p>
                   <p className="text-warm-500 text-sm">Personality type</p>
                 </div>
               </div>
               <p className="text-warm-600 text-sm leading-relaxed mb-4">
                 {mbtiDescription.summary}
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-5">
                 {mbtiDescription.strengths.map((s, i) => (
-                  <span key={i} className="px-3 py-1.5 rounded-full text-xs font-semibold bg-sage-50 border border-sage-200 text-sage-700">
+                  <span key={i} className="px-3 py-1.5 rounded-full text-xs font-semibold bg-terracotta-50 border border-terracotta-100 text-terracotta-600">
                     {s}
                   </span>
                 ))}
               </div>
+
+              {/* MBTI Dimensions */}
+              <div className="pt-4 border-t border-warm-100 space-y-3">
+                <h3 className="text-xs font-semibold text-warm-600 mb-3">Your Dimensions</h3>
+                
+                {(dimensions.E !== undefined || dimensions.I !== undefined) && (
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs font-medium text-warm-600">
+                        {dimensions.E ? 'Extraversion' : 'Introversion'}
+                      </span>
+                      <span className="text-xs font-semibold" style={{ color: '#c67d5c' }}>
+                        {dimensions.E || dimensions.I}%
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: '#ede8e3' }}>
+                      <div style={{ width: `${dimensions.E || dimensions.I}%`, height: '100%', background: '#c67d5c', borderRadius: 9999 }} />
+                    </div>
+                  </div>
+                )}
+
+                {(dimensions.N !== undefined || dimensions.S !== undefined) && (
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs font-medium text-warm-600">
+                        {dimensions.N ? 'Intuition' : 'Sensing'}
+                      </span>
+                      <span className="text-xs font-semibold" style={{ color: '#c67d5c' }}>
+                        {dimensions.N || dimensions.S}%
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: '#ede8e3' }}>
+                      <div style={{ width: `${dimensions.N || dimensions.S}%`, height: '100%', background: '#c67d5c', borderRadius: 9999 }} />
+                    </div>
+                  </div>
+                )}
+
+                {(dimensions.F !== undefined || dimensions.T !== undefined) && (
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs font-medium text-warm-600">
+                        {dimensions.F ? 'Feeling' : 'Thinking'}
+                      </span>
+                      <span className="text-xs font-semibold" style={{ color: '#c67d5c' }}>
+                        {dimensions.F || dimensions.T}%
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: '#ede8e3' }}>
+                      <div style={{ width: `${dimensions.F || dimensions.T}%`, height: '100%', background: '#c67d5c', borderRadius: 9999 }} />
+                    </div>
+                  </div>
+                )}
+
+                {(dimensions.P !== undefined || dimensions.J !== undefined) && (
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs font-medium text-warm-600">
+                        {dimensions.P ? 'Perceiving' : 'Judging'}
+                      </span>
+                      <span className="text-xs font-semibold" style={{ color: '#c67d5c' }}>
+                        {dimensions.P || dimensions.J}%
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: '#ede8e3' }}>
+                      <div style={{ width: `${dimensions.P || dimensions.J}%`, height: '100%', background: '#c67d5c', borderRadius: 9999 }} />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
-          {/* Share Profile */}
-          <button
-            onClick={() => {
-              const text = `My Innergy Profile: ${userData.mbtiType} (${mbtiDescription?.title || ""}) \u2022 ${userData.birthYinYang} ${userData.birthElement} ${elementIcons[userData.birthElement]} \u2022 Year of the ${zodiacAnimal} ${animalIcons[zodiacAnimal]}\n\nDiscover yours at myinnergy.vercel.app`;
-              if (navigator.share) {
-                navigator.share({ title: "My Innergy Profile", text });
-              } else {
-                navigator.clipboard.writeText(text);
-                alert("Profile copied to clipboard!");
-              }
-            }}
-            className="w-full bg-white rounded-3xl shadow-soft p-4 flex items-center gap-3 hover:shadow-medium transition-shadow"
-          >
-            <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-              </svg>
-            </div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-warm-900">Share Your Profile</p>
-              <p className="text-xs text-warm-500">Show your cosmic identity</p>
-            </div>
-            <svg className="w-5 h-5 text-warm-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+          {/* Archetypes */}
+          {userData && (
+            <CelebrityMatches mbtiType={userData.mbtiType} />
+          )}
 
-          {/* How it works */}
-          <button
-            onClick={() => router.push("/about")}
-            className="w-full bg-white rounded-3xl shadow-soft p-4 flex items-center gap-3 hover:shadow-medium transition-shadow"
-          >
-            <div className="w-10 h-10 bg-warm-200 rounded-xl flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-warm-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          {/* Action Cards */}
+          <div className="space-y-3 pt-2">
+            {/* Share Profile */}
+            <button
+              onClick={handleShareProfile}
+              disabled={isGenerating}
+              className="w-full bg-white rounded-3xl shadow-soft p-4 flex items-center gap-3 hover:shadow-medium transition-shadow disabled:opacity-70"
+            >
+              <div className="w-10 h-10 bg-terracotta-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                {isGenerating ? (
+                  <svg className="w-5 h-5 text-violet-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-terracotta-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-semibold text-warm-900">
+                  {isGenerating ? "Creating your card..." : "Share Your Profile"}
+                </p>
+                <p className="text-xs text-warm-500">
+                  {isGenerating ? "This may take a moment" : "Share your Haru profile card"}
+                </p>
+              </div>
+              {!isGenerating && (
+                <svg className="w-5 h-5 text-warm-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              )}
+            </button>
+
+            {/* How it Works */}
+            <button
+              onClick={() => router.push("/about")}
+              className="w-full bg-white rounded-3xl shadow-soft p-4 flex items-center gap-3 hover:shadow-medium transition-shadow"
+            >
+              <div className="w-10 h-10 bg-warm-200 rounded-xl flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-warm-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-semibold text-warm-900">How It Works</p>
+                <p className="text-xs text-warm-500">Learn about your daily insights</p>
+              </div>
+              <svg className="w-5 h-5 text-warm-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-warm-900">How It Works</p>
-              <p className="text-xs text-warm-500">Learn about your daily insights</p>
-            </div>
-            <svg className="w-5 h-5 text-warm-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+            </button>
+          </div>
 
           {/* Reset */}
           <div className="pt-2 pb-4">
