@@ -13,6 +13,9 @@ export default function TermsPage() {
           (&quot;Haru&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;). By creating an account or using Haru,
           you agree to these Terms.
         </p>
+        <p style={{ ...styles.intro, marginBottom: "40px" }}>
+          Haru is operated by K Insider Ltd, registered in England and Wales, with its registered office at 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom.
+        </p>
 
         <section style={styles.section}>
           <h2 style={styles.heading}>1. About Haru</h2>
@@ -65,6 +68,7 @@ export default function TermsPage() {
             <li>Refunds are handled by your platform provider in accordance with their policies.</li>
             <li>Deleting your Haru account does not automatically cancel your subscription.</li>
             <li>All payments are processed by Apple or Google. Haru does not store payment card details.</li>
+            <li>Pricing and subscription terms are displayed in the app before purchase.</li>
           </ul>
 
           <h3 style={styles.subheading}>Digital Content &amp; Cooling-Off Rights (UK &amp; EU Users)</h3>

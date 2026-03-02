@@ -34,6 +34,10 @@ export default function TermsOfServicePage() {
             These Terms of Service govern your use of the Haru mobile application. By creating an account or using Haru, you agree to these Terms.
           </p>
 
+          <p className="text-sm text-warm-500 leading-relaxed">
+            Haru is operated by K Insider Ltd, registered in England and Wales, with its registered office at 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom.
+          </p>
+
           <div className="space-y-6 text-sm text-warm-600 leading-relaxed">
 
             <div>
@@ -78,6 +82,7 @@ export default function TermsOfServicePage() {
                 <li>· Refunds are handled by your platform provider in accordance with their policies.</li>
                 <li>· Deleting your Haru account does not automatically cancel your subscription.</li>
                 <li>· All payments are processed by Apple or Google. Haru does not store payment card details.</li>
+                <li>· Pricing and subscription terms are displayed in the app before purchase.</li>
               </ul>
               <p className="font-medium text-warm-700 mb-1">Digital Content &amp; Cooling-Off Rights (UK &amp; EU Users)</p>
               <p>By purchasing a subscription, you expressly agree that access to digital content may begin immediately. Where access begins during a statutory cooling-off period, you acknowledge that you may lose your right to cancel under applicable consumer protection laws once the digital content has been fully delivered.</p>
