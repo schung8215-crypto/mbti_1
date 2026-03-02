@@ -97,20 +97,10 @@ export default function SettingsPage() {
           <section>
             <p className="text-xs font-semibold text-warm-400 uppercase tracking-wider px-1 mb-2">Account</p>
             <div className="bg-white rounded-2xl shadow-soft overflow-hidden divide-y divide-warm-100">
-              {/* Email */}
               <div className="px-4 py-3.5">
                 <p className="text-sm text-warm-900">Email</p>
-                <p className="text-sm text-warm-400 mt-0.5">{email ?? "—"}</p>
+                <p className="text-sm text-warm-400 mt-0.5">{email ?? "Not signed in"}</p>
               </div>
-
-              {/* Delete account */}
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="w-full text-left px-4 py-3.5"
-              >
-                <p className="text-sm text-red-500">Delete account</p>
-                <p className="text-xs text-warm-400 mt-0.5">This permanently removes your profile and data.</p>
-              </button>
             </div>
           </section>
 
@@ -122,7 +112,7 @@ export default function SettingsPage() {
                 onClick={handleManageSubscription}
                 className="w-full text-left px-4 py-3.5 flex items-center justify-between"
               >
-                <p className="text-sm text-warm-900">Manage subscription</p>
+                <p className="text-sm text-warm-900">Manage subscription (App Store)</p>
                 <svg className="w-4 h-4 text-warm-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -141,7 +131,7 @@ export default function SettingsPage() {
               <p className="text-xs text-warm-600 px-1 mt-2">{restoreMessage}</p>
             )}
             {!restoreMessage && (
-              <p className="text-xs text-warm-400 px-1 mt-2">Subscriptions are managed through your app store.</p>
+              <p className="text-xs text-warm-400 px-1 mt-2">Subscriptions are managed through your Apple App Store or Google Play account.</p>
             )}
           </section>
 
@@ -195,6 +185,23 @@ export default function SettingsPage() {
             </div>
           </section>
 
+          {/* Danger Zone */}
+          <section>
+            <p className="text-xs font-semibold text-warm-400 uppercase tracking-wider px-1 mb-2">Danger Zone</p>
+            <div className="bg-white rounded-2xl shadow-soft overflow-hidden">
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="w-full text-left px-4 py-3.5"
+              >
+                <p className="text-sm text-red-500">Delete account</p>
+                <p className="text-xs text-warm-400 mt-0.5">This permanently removes your Haru profile and stored data. Subscription cancellation must be done via your app store.</p>
+              </button>
+            </div>
+          </section>
+
+          {/* Version */}
+          <p className="text-center text-xs text-warm-300 pb-4">Haru v1.0.0</p>
+
         </div>
       </div>
 
@@ -206,9 +213,9 @@ export default function SettingsPage() {
             onClick={() => setShowDeleteModal(false)}
           />
           <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-xl p-6 animate-slide-up">
-            <h2 className="text-base font-semibold text-warm-900 mb-2">Delete your account?</h2>
+            <h2 className="text-base font-semibold text-warm-900 mb-2">Delete account?</h2>
             <p className="text-sm text-warm-500 leading-relaxed mb-6">
-              This will permanently remove your personality results, birth date, and saved insights. This action cannot be undone.
+              This will permanently remove your profile, birth date, saved insights, and compatibility data. This action cannot be undone.
             </p>
             <div className="space-y-2">
               <button
@@ -216,7 +223,7 @@ export default function SettingsPage() {
                 disabled={deleting}
                 className="w-full py-3 rounded-2xl text-sm font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors disabled:opacity-50"
               >
-                {deleting ? "Deleting…" : "Delete account"}
+                {deleting ? "Deleting…" : "Delete permanently"}
               </button>
               <button
                 onClick={() => setShowDeleteModal(false)}
