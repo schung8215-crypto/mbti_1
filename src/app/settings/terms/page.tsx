@@ -27,7 +27,7 @@ export default function TermsOfServicePage() {
         <div className="px-5 pb-16 space-y-6">
 
           <p className="text-sm text-warm-600 leading-relaxed">
-            These Terms of Service (&quot;Terms&quot;) govern your use of the Haru mobile application (&quot;Haru&quot;).
+            These Terms of Service govern your use of the Haru mobile application.
           </p>
 
           <p className="text-sm text-warm-600 leading-relaxed">

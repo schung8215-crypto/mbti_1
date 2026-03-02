@@ -5,7 +5,7 @@ export default function TermsPage() {
         <h1 style={styles.title}>Terms of Service</h1>
         <p style={styles.meta}>Effective 5 March 2026</p>
         <p style={styles.intro}>
-          These Terms of Service (&quot;Terms&quot;) govern your use of the Haru mobile application (&quot;Haru&quot;).
+          These Terms of Service govern your use of the Haru mobile application.
         </p>
         <p style={styles.intro}>
           Haru is operated by K Insider Ltd, registered in England and Wales, with its registered office at 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom.
