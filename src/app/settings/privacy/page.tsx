@@ -30,108 +30,151 @@ export default function PrivacyPolicyPage() {
             Haru is a reflection app combining personality frameworks and traditional Korean Saju for personal growth.
           </p>
 
-          {/* Full policy */}
+          <p className="text-sm text-warm-600 leading-relaxed">
+            This Privacy Policy explains how Haru collects, uses, and protects your information when you use the Haru mobile application. By using Haru, you agree to the practices described in this Privacy Policy.
+          </p>
+
           <div className="space-y-6 text-sm text-warm-600 leading-relaxed">
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-1">Who we are</h3>
-              <p>
-                Haru is operated by K Insider Ltd, a company registered in England and Wales.
-                If you have any questions about this policy, contact us at{" "}
-                <a href="mailto:dev@kinsider.co.uk" className="text-terracotta underline">
-                  dev@kinsider.co.uk
-                </a>.
-              </p>
+              <h3 className="font-semibold text-warm-800 mb-2">1. Information We Collect</h3>
+              <p className="mb-2">We collect only the information necessary to provide Haru&apos;s services.</p>
+              <p className="font-medium text-warm-700 mb-1">A. Account Information</p>
+              <ul className="space-y-1 pl-3 mb-3">
+                <li>· Email address</li>
+                <li>· Authentication data (if signing in via Apple, Google, etc.)</li>
+              </ul>
+              <p className="font-medium text-warm-700 mb-1">B. Profile Information</p>
+              <ul className="space-y-1 pl-3 mb-3">
+                <li>· Personality quiz responses</li>
+                <li>· Personality type result</li>
+                <li>· Birth date (used to generate Saju-based insights)</li>
+              </ul>
+              <p className="mb-2">We do not collect birth time or precise location data.</p>
+              <p className="font-medium text-warm-700 mb-1">C. Usage Information</p>
+              <ul className="space-y-1 pl-3 mb-3">
+                <li>· Saved or bookmarked insights</li>
+                <li>· Compatibility interactions</li>
+                <li>· Feature usage (e.g., daily visits, streaks)</li>
+              </ul>
+              <p className="font-medium text-warm-700 mb-1">D. Technical &amp; Device Data</p>
+              <ul className="space-y-1 pl-3 mb-3">
+                <li>· Device type</li>
+                <li>· Operating system</li>
+                <li>· App version</li>
+                <li>· Anonymous analytics data</li>
+                <li>· Crash reports</li>
+              </ul>
+              <p>We do not collect payment card details. All subscription payments are processed by Apple App Store or Google Play.</p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-1">What we collect</h3>
-              <p>We collect the following information when you create an account and use the app:</p>
-              <ul className="mt-2 space-y-1 pl-1">
-                <li>· <strong className="text-warm-700">Email address</strong> — provided via your sign-in provider (Google or Apple).</li>
-                <li>· <strong className="text-warm-700">Birth date</strong> — used to calculate your Saju birth pillar.</li>
-                <li>· <strong className="text-warm-700">Personality responses</strong> — your answers to the onboarding questions, used to derive your personality type.</li>
-                <li>· <strong className="text-warm-700">Push notification token</strong> — if you grant permission, used to send your daily reminder. Stored on our servers and never shared.</li>
-                <li>· <strong className="text-warm-700">Subscription status</strong> — trial, active, or expired, managed via Apple or Google.</li>
+              <h3 className="font-semibold text-warm-800 mb-2">2. How We Use Your Information</h3>
+              <p className="mb-2">We use your information to:</p>
+              <ul className="space-y-1 pl-3">
+                <li>· Generate your personality profile</li>
+                <li>· Calculate your Saju profile based on your birth date</li>
+                <li>· Deliver personalised daily insights</li>
+                <li>· Provide compatibility features</li>
+                <li>· Maintain and improve the app</li>
+                <li>· Manage subscriptions and accounts</li>
+                <li>· Respond to support requests</li>
+              </ul>
+              <p className="mt-2">We do not sell your personal data.</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-warm-800 mb-2">3. Legal Basis for Processing (UK &amp; EEA Users)</h3>
+              <p className="mb-2">If you are located in the UK or EEA, we process your data under the following lawful bases:</p>
+              <ul className="space-y-1 pl-3">
+                <li>· <span className="font-medium text-warm-700">Consent</span> — when you create an account and provide profile data</li>
+                <li>· <span className="font-medium text-warm-700">Performance of a contract</span> — to provide app features you subscribe to</li>
+                <li>· <span className="font-medium text-warm-700">Legitimate interests</span> — to improve and maintain Haru&apos;s services</li>
+              </ul>
+              <p className="mt-2">You may withdraw consent at any time by deleting your account.</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-warm-800 mb-2">4. Data Sharing</h3>
+              <p className="mb-2">We do not sell or rent your personal information. We may share limited data with trusted service providers that help us operate Haru, including:</p>
+              <ul className="space-y-1 pl-3">
+                <li>· Cloud hosting providers</li>
+                <li>· Analytics services</li>
+                <li>· Authentication services</li>
+                <li>· Apple App Store / Google Play (for payment processing)</li>
+              </ul>
+              <p className="mt-2">These providers process data only as necessary to perform their services.</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-warm-800 mb-2">5. International Data Transfers</h3>
+              <p>As a UK-based company, your data may be processed in the United Kingdom or other countries where our service providers operate. Where required, we use appropriate safeguards in accordance with UK GDPR and applicable data protection laws.</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-warm-800 mb-2">6. Data Retention</h3>
+              <p className="mb-2">We retain your personal data for as long as your account remains active. If you delete your account:</p>
+              <ul className="space-y-1 pl-3">
+                <li>· Your profile data will be deleted or anonymised within a reasonable period, unless required to retain it by law.</li>
+                <li>· Subscription records may be retained as required for accounting and legal purposes.</li>
               </ul>
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-1">How we use your information</h3>
-              <p>
-                Your data is used solely to operate Haru — generating your personality profile,
-                daily insights, compatibility features, and saved reflections. We do not use your
-                data for advertising or marketing to third parties.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-warm-800 mb-1">Storage and security</h3>
-              <p>
-                Your data is stored securely in Supabase (hosted on AWS infrastructure in the EU).
-                Session data is also stored locally on your device. We use industry-standard
-                encryption in transit (TLS) and at rest.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-warm-800 mb-1">Third-party services</h3>
-              <p>We use the following third-party services to operate the app:</p>
-              <ul className="mt-2 space-y-1 pl-1">
-                <li>· <strong className="text-warm-700">Google / Apple Sign-In</strong> — authentication only.</li>
-                <li>· <strong className="text-warm-700">Supabase</strong> — database and auth infrastructure.</li>
-                <li>· <strong className="text-warm-700">Vercel</strong> — app hosting and delivery.</li>
-                <li>· <strong className="text-warm-700">RevenueCat</strong> — subscription management (in-app purchases). RevenueCat processes your subscription status on behalf of Apple or Google; we do not store payment details.</li>
-                <li>· <strong className="text-warm-700">Apple APNs / Google FCM</strong> — push notification delivery. Used only to send your daily reading reminder.</li>
+              <h3 className="font-semibold text-warm-800 mb-2">7. Your Rights</h3>
+              <p className="mb-2">Depending on your location, you may have the right to:</p>
+              <ul className="space-y-1 pl-3">
+                <li>· Access your personal data</li>
+                <li>· Correct inaccurate information</li>
+                <li>· Request deletion of your data</li>
+                <li>· Restrict or object to processing</li>
+                <li>· Request a copy of your data</li>
               </ul>
-              <p className="mt-2">We do not share your personal data with any other third parties.</p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-warm-800 mb-1">Your rights</h3>
-              <p>
-                Under UK GDPR and applicable law, you have the right to access, correct, or delete
-                your personal data. You can delete your account and all associated data at any time
-                from Settings → Account → Delete account. For any other data requests, email us at{" "}
-                <a href="mailto:dev@kinsider.co.uk" className="text-terracotta underline">
-                  dev@kinsider.co.uk
-                </a>.
+              <p className="mt-2">
+                To exercise your rights, contact us at{" "}
+                <a href="mailto:dev@kinsider.co.uk" className="text-terracotta underline">dev@kinsider.co.uk</a>.
+                If you are located in the UK or EEA, you may also lodge a complaint with your local data protection authority.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-1">Data retention</h3>
-              <p>
-                We retain your data for as long as your account is active. If you delete your
-                account, your personal data is permanently removed within 30 days.
-              </p>
+              <h3 className="font-semibold text-warm-800 mb-2">8. Account Deletion</h3>
+              <p className="mb-2">You may delete your account at any time within Settings. Deleting your account will remove:</p>
+              <ul className="space-y-1 pl-3">
+                <li>· Your personality results</li>
+                <li>· Your birth date</li>
+                <li>· Saved insights</li>
+                <li>· Compatibility data</li>
+              </ul>
+              <p className="mt-2">Subscription cancellation must be handled separately through your Apple App Store or Google Play account.</p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-1">Children</h3>
-              <p>
-                Haru is not directed at children under 13. We do not knowingly collect data from
-                children. If you believe a child has provided us with personal data, contact us and
-                we will delete it promptly.
-              </p>
+              <h3 className="font-semibold text-warm-800 mb-2">9. Children&apos;s Privacy</h3>
+              <p>Haru is not intended for children under 13. We do not knowingly collect personal data from children. If we become aware that a child has provided personal information, we will delete it promptly.</p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-1">Changes to this policy</h3>
-              <p>
-                We may update this policy occasionally. We will notify you of material changes
-                within the app. Continued use after changes constitutes acceptance of the updated policy.
-              </p>
+              <h3 className="font-semibold text-warm-800 mb-2">10. Data Security</h3>
+              <p>We implement appropriate technical and organisational measures to protect your personal data. However, no digital system is completely secure, and we cannot guarantee absolute security.</p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-1">Contact</h3>
-              <p>
-                K Insider Ltd<br />
-                <a href="mailto:dev@kinsider.co.uk" className="text-terracotta underline">
-                  dev@kinsider.co.uk
-                </a>
-              </p>
+              <h3 className="font-semibold text-warm-800 mb-2">11. Changes to This Policy</h3>
+              <p>We may update this Privacy Policy from time to time. If material changes are made, we will notify users within the app. Continued use of Haru after changes take effect constitutes acceptance of the updated policy.</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-warm-800 mb-2">12. Contact</h3>
+              <p className="mb-2">If you have questions about this Privacy Policy or how your data is handled, contact:</p>
+              <address className="not-italic space-y-0.5">
+                <p className="font-medium text-warm-700">K Insider Ltd</p>
+                <p>71–75 Shelton Street</p>
+                <p>Covent Garden</p>
+                <p>London WC2H 9JQ</p>
+                <p>United Kingdom</p>
+                <a href="mailto:dev@kinsider.co.uk" className="text-terracotta underline">dev@kinsider.co.uk</a>
+              </address>
             </div>
 
           </div>
