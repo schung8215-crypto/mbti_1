@@ -3,18 +3,15 @@ export default function PrivacyPage() {
     <main style={styles.container}>
       <div style={styles.wrapper}>
         <h1 style={styles.title}>Privacy Policy</h1>
-        <p style={styles.meta}>Effective Date: 5 March 2026</p>
-        <p style={{ fontSize: "14px", opacity: 0.7, marginBottom: "16px" }}>
-          Haru is a reflection app combining personality frameworks and traditional
-          Korean Saju for personal growth.
-        </p>
-        <p style={{ fontSize: "14px", opacity: 0.7, marginBottom: "48px" }}>
-          Haru is operated by K Insider Ltd, registered in England and Wales, with its registered office at 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom.
+        <p style={styles.meta}>Effective 5 March 2026</p>
+        <p style={styles.intro}>
+          This Privacy Policy explains how Haru collects, uses, and protects your information when you use the Haru mobile application.
         </p>
         <p style={styles.intro}>
-          This Privacy Policy explains how Haru (&quot;Haru&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;)
-          collects, uses, and protects your information when you use the Haru mobile application.
-          By using Haru, you agree to the practices described in this Privacy Policy.
+          Haru is operated by K Insider Ltd, registered in England and Wales, with its registered office at 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom.
+        </p>
+        <p style={{ ...styles.intro, marginBottom: "40px" }}>
+          Haru provides personality-based and Saju-based reflection content for personal growth. By using Haru, you agree to the practices described in this Privacy Policy.
         </p>
 
         <section style={styles.section}>
