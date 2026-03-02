@@ -94,6 +94,7 @@ export default function TermsOfServicePage() {
               <ul className="space-y-1 pl-3">
                 <li>· You will not be charged until the trial ends.</li>
                 <li>· Your subscription will automatically begin unless cancelled before the trial period expires.</li>
+                <li>· You will be charged at the rate shown in the app at the time of purchase.</li>
                 <li>· It is your responsibility to manage subscription settings through your app store account.</li>
               </ul>
             </div>
@@ -111,7 +112,7 @@ export default function TermsOfServicePage() {
                 <li>· Reverse engineer the application</li>
                 <li>· Use Haru content for commercial purposes without permission</li>
               </ul>
-              <p>Personal, non-commercial use is permitted.</p>
+              <p>Haru is licensed to you for personal, non-commercial use only.</p>
             </div>
 
             <div>
