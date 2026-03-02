@@ -126,7 +126,7 @@ export default function TermsPage() {
           </ul>
         </section>
 
-        <section style={styles.section}>
+        <section style={{ ...styles.section, marginTop: "8px" }}>
           <h2 style={styles.heading}>9. No Professional Advice</h2>
           <p>
             Haru provides personality-based and Saju-based reflections for personal insight.
@@ -186,7 +186,15 @@ export default function TermsPage() {
         </section>
 
         <section style={styles.section}>
-          <h2 style={styles.heading}>13. Governing Law</h2>
+          <h2 style={styles.heading}>13. Entire Agreement</h2>
+          <p>
+            These Terms constitute the entire agreement between you and Haru regarding your use
+            of the app and supersede any prior agreements or understandings.
+          </p>
+        </section>
+
+        <section style={styles.section}>
+          <h2 style={styles.heading}>14. Governing Law</h2>
           <p>
             These Terms are governed by the laws of England and Wales. If you are a consumer
             residing outside the United Kingdom, you may also benefit from mandatory protections
@@ -195,7 +203,7 @@ export default function TermsPage() {
         </section>
 
         <section style={styles.section}>
-          <h2 style={styles.heading}>14. Changes to These Terms</h2>
+          <h2 style={styles.heading}>15. Changes to These Terms</h2>
           <p>
             We may update these Terms from time to time. If we make material changes, we will
             notify users within the app. Continued use of Haru after changes take effect
@@ -204,7 +212,7 @@ export default function TermsPage() {
         </section>
 
         <section style={styles.section}>
-          <h2 style={styles.heading}>15. Contact</h2>
+          <h2 style={styles.heading}>16. Contact</h2>
           <p>If you have questions about these Terms, please contact:</p>
           <address style={styles.address}>
             K Insider Ltd<br />

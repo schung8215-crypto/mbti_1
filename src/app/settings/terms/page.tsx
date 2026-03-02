@@ -126,7 +126,7 @@ export default function TermsOfServicePage() {
               </ul>
             </div>
 
-            <div>
+            <div className="pt-2">
               <h3 className="font-semibold text-warm-800 mb-2">9. No Professional Advice</h3>
               <p className="mb-2">Haru provides personality-based and Saju-based reflections for personal insight. The content:</p>
               <ul className="space-y-1 pl-3 mb-2">
@@ -167,17 +167,22 @@ export default function TermsOfServicePage() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-2">13. Governing Law</h3>
+              <h3 className="font-semibold text-warm-800 mb-2">13. Entire Agreement</h3>
+              <p>These Terms constitute the entire agreement between you and Haru regarding your use of the app and supersede any prior agreements or understandings.</p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-warm-800 mb-2">14. Governing Law</h3>
               <p>These Terms are governed by the laws of England and Wales. If you are a consumer residing outside the United Kingdom, you may also benefit from mandatory protections under the laws of your country of residence.</p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-2">14. Changes to These Terms</h3>
+              <h3 className="font-semibold text-warm-800 mb-2">15. Changes to These Terms</h3>
               <p>We may update these Terms from time to time. If we make material changes, we will notify users within the app. Continued use of Haru after changes take effect constitutes acceptance of the updated Terms.</p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-warm-800 mb-2">15. Contact</h3>
+              <h3 className="font-semibold text-warm-800 mb-2">16. Contact</h3>
               <p className="mb-2">If you have questions about these Terms, please contact:</p>
               <address className="not-italic space-y-0.5">
                 <p className="font-medium text-warm-700">K Insider Ltd</p>
