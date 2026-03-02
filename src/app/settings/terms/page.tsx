@@ -26,18 +26,9 @@ export default function TermsOfServicePage() {
 
         <div className="px-5 pb-16 space-y-6">
 
-          {/* Summary */}
-          <div className="bg-white rounded-2xl shadow-soft p-5 space-y-2">
-            <h2 className="text-sm font-semibold text-warm-900">The short version</h2>
-            <ul className="space-y-1.5 text-sm text-warm-600 leading-relaxed">
-              <li>Haru is for personal, non-commercial use.</li>
-              <li>Insights are for self-reflection — not professional advice.</li>
-              <li>You must be 13 or older to use the app.</li>
-              <li>Subscriptions are managed through Apple or Google and renew automatically unless cancelled.</li>
-            </ul>
-          </div>
-
-          <div className="border-t border-warm-200" />
+          <p className="text-sm text-warm-500 leading-relaxed">
+            Haru is a reflection app combining personality frameworks and traditional Korean Saju for personal growth.
+          </p>
 
           {/* Full terms */}
           <div className="space-y-6 text-sm text-warm-600 leading-relaxed">

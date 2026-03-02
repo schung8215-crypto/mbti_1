@@ -26,17 +26,9 @@ export default function PrivacyPolicyPage() {
 
         <div className="px-5 pb-16 space-y-6">
 
-          {/* Human summary */}
-          <div className="bg-white rounded-2xl shadow-soft p-5 space-y-2">
-            <h2 className="text-sm font-semibold text-warm-900">The short version</h2>
-            <ul className="space-y-1.5 text-sm text-warm-600 leading-relaxed">
-              <li>We collect your email, birth date, and personality responses — nothing more.</li>
-              <li>We do not sell your data.</li>
-              <li>You can delete your account and all data at any time from Settings.</li>
-            </ul>
-          </div>
-
-          <div className="border-t border-warm-200" />
+          <p className="text-sm text-warm-500 leading-relaxed">
+            Haru is a reflection app combining personality frameworks and traditional Korean Saju for personal growth.
+          </p>
 
           {/* Full policy */}
           <div className="space-y-6 text-sm text-warm-600 leading-relaxed">
