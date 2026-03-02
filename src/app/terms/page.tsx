@@ -3,18 +3,15 @@ export default function TermsPage() {
     <main style={styles.container}>
       <div style={styles.wrapper}>
         <h1 style={styles.title}>Terms of Service</h1>
-        <p style={styles.meta}>Effective Date: 5 March 2026</p>
-        <p style={{ fontSize: "14px", opacity: 0.7, marginBottom: "48px" }}>
-          Haru is a reflection app combining personality frameworks and traditional
-          Korean Saju for personal growth.
+        <p style={styles.meta}>Effective 5 March 2026</p>
+        <p style={styles.intro}>
+          These Terms of Service (&quot;Terms&quot;) govern your use of the Haru mobile application (&quot;Haru&quot;).
         </p>
         <p style={styles.intro}>
-          These Terms of Service (&quot;Terms&quot;) govern your use of the Haru mobile application
-          (&quot;Haru&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;). By creating an account or using Haru,
-          you agree to these Terms.
+          Haru is operated by K Insider Ltd, registered in England and Wales, with its registered office at 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom.
         </p>
         <p style={{ ...styles.intro, marginBottom: "40px" }}>
-          Haru is operated by K Insider Ltd, registered in England and Wales, with its registered office at 71–75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom.
+          Haru provides personality-based and Saju-based reflection content for personal growth. By creating an account or using Haru, you agree to these Terms.
         </p>
 
         <section style={styles.section}>
