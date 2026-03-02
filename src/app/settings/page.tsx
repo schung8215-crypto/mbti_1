@@ -11,7 +11,16 @@ export default function SettingsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [restoreMessage, setRestoreMessage] = useState<string | null>(null);
+  const [platform, setPlatform] = useState<string>("web");
   const rc = useRevenueCat();
+
+  useEffect(() => {
+    if (rc.isNative) {
+      import("@capacitor/core").then(({ Capacitor }) => {
+        setPlatform(Capacitor.getPlatform());
+      });
+    }
+  }, [rc.isNative]);
 
   const handleManageSubscription = () => {
     if (typeof window === "undefined") return;
@@ -112,7 +121,9 @@ export default function SettingsPage() {
                 onClick={handleManageSubscription}
                 className="w-full text-left px-4 py-3.5 flex items-center justify-between"
               >
-                <p className="text-sm text-warm-900">Manage subscription (App Store)</p>
+                <p className="text-sm text-warm-900">
+                  Manage subscription{platform === "android" ? " (Google Play)" : " (App Store)"}
+                </p>
                 <svg className="w-4 h-4 text-warm-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -168,7 +179,7 @@ export default function SettingsPage() {
                 href="mailto:dev@kinsider.co.uk"
                 className="block px-4 py-3.5 flex items-center justify-between"
               >
-                <p className="text-sm text-warm-900">Contact support</p>
+                <p className="text-sm text-warm-900">Contact us</p>
                 <svg className="w-4 h-4 text-warm-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -177,7 +188,7 @@ export default function SettingsPage() {
                 href="mailto:dev@kinsider.co.uk?subject=Problem%20report"
                 className="block px-4 py-3.5 flex items-center justify-between"
               >
-                <p className="text-sm text-warm-900">Report a problem</p>
+                <p className="text-sm text-warm-900">Report an issue</p>
                 <svg className="w-4 h-4 text-warm-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
