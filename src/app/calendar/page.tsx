@@ -71,7 +71,7 @@ const MONTH_NAMES = [
 ];
 
 const elementIcons: Record<string, string> = {
-  Wood: "\u{1F33F}", Fire: "\u{1F525}", Earth: "\u{26F0}\uFE0F", Metal: "\u{2728}", Water: "\u{1F4A7}",
+  Wood: "🌳", Fire: "🔥", Earth: "⛰️", Metal: "✨", Water: "💧",
 };
 
 // --- Component ---
