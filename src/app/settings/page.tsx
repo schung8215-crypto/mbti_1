@@ -185,19 +185,19 @@ export default function SettingsPage() {
             </div>
           </section>
 
-          {/* Danger Zone */}
-          <section>
-            <p className="text-xs font-semibold text-warm-400 uppercase tracking-wider px-1 mb-2">Danger Zone</p>
-            <div className="bg-white rounded-2xl shadow-soft overflow-hidden">
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="w-full text-left px-4 py-3.5"
-              >
-                <p className="text-sm text-red-500">Delete account</p>
-                <p className="text-xs text-warm-400 mt-0.5">This permanently removes your Haru profile and stored data. Subscription cancellation must be done via your app store.</p>
-              </button>
-            </div>
-          </section>
+          {/* Delete account */}
+          <div className="px-1">
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="w-full py-3 rounded-2xl text-sm font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors"
+            >
+              Delete account
+            </button>
+            <p className="text-xs text-warm-400 text-center mt-2 leading-relaxed">
+              This permanently removes your Haru profile and stored data.<br />
+              Subscription cancellation must be done via your app store.
+            </p>
+          </div>
 
           {/* Version */}
           <p className="text-center text-xs text-warm-300 pb-4">Haru v1.0.0</p>
