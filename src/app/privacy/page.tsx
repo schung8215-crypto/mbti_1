@@ -104,6 +104,8 @@ export default function PrivacyPage() {
           </ul>
           <p style={{ marginTop: "12px" }}>
             These providers process data only as necessary to perform their services.
+            All third-party providers are required to process personal data in accordance
+            with applicable data protection laws.
           </p>
         </section>
 
@@ -124,7 +126,7 @@ export default function PrivacyPage() {
           <ul style={styles.list}>
             <li>
               Your profile data (including birth date and personality results) will be deleted
-              or anonymised within a reasonable period, unless required to retain it by law.
+              or anonymised within 30 days, unless required to retain it by law.
             </li>
             <li>
               Subscription records may be retained as required for accounting and legal purposes.

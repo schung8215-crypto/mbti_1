@@ -107,7 +107,7 @@ export default function PrivacyPolicyPage() {
                 <li>· Authentication services</li>
                 <li>· Apple App Store / Google Play (for payment processing)</li>
               </ul>
-              <p className="mt-2">These providers process data only as necessary to perform their services.</p>
+              <p className="mt-2">These providers process data only as necessary to perform their services. All third-party providers are required to process personal data in accordance with applicable data protection laws.</p>
             </div>
 
             <div>
@@ -119,7 +119,7 @@ export default function PrivacyPolicyPage() {
               <h3 className="font-semibold text-warm-800 mb-2">6. Data Retention</h3>
               <p className="mb-2">We retain your personal data for as long as your account remains active. If you delete your account:</p>
               <ul className="space-y-1 pl-3">
-                <li>· Your profile data will be deleted or anonymised within a reasonable period, unless required to retain it by law.</li>
+                <li>· Your profile data will be deleted or anonymised within 30 days, unless required to retain it by law.</li>
                 <li>· Subscription records may be retained as required for accounting and legal purposes.</li>
               </ul>
             </div>
@@ -155,7 +155,7 @@ export default function PrivacyPolicyPage() {
 
             <div>
               <h3 className="font-semibold text-warm-800 mb-2">9. Children&apos;s Privacy</h3>
-              <p>Haru is not intended for children under 13. We do not knowingly collect personal data from children. If we become aware that a child has provided personal information, we will delete it promptly.</p>
+              <p>Haru is not intended for children under 13 (or the minimum age required in your jurisdiction). We do not knowingly collect personal data from children. If we become aware that a child has provided personal information, we will delete it promptly.</p>
             </div>
 
             <div>
