@@ -102,6 +102,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("mbti-saju-user");
@@ -113,10 +114,8 @@ export default function ProfilePage() {
   }, [router]);
 
   const handleReset = () => {
-    if (confirm("Are you sure you want to reset your profile? You'll need to take the test again.")) {
-      localStorage.removeItem("mbti-saju-user");
-      router.push("/onboarding/intro");
-    }
+    localStorage.removeItem("mbti-saju-user");
+    router.push("/onboarding/intro");
   };
 
   if (!userData) {
@@ -512,7 +511,7 @@ export default function ProfilePage() {
           {/* Reset */}
           <div className="pt-2 pb-4">
             <button
-              onClick={handleReset}
+              onClick={() => setShowResetModal(true)}
               className="w-full py-3 px-4 rounded-xl text-warm-500 hover:text-red-500 hover:bg-red-50 transition-colors text-sm font-medium"
             >
               Reset Profile
@@ -522,6 +521,33 @@ export default function ProfilePage() {
       </div>
 
       <BottomNav />
+
+      {/* Reset profile confirmation modal */}
+      {showResetModal && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-8">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowResetModal(false)} />
+          <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-xl p-6 animate-slide-up">
+            <h2 className="text-base font-semibold text-warm-900 mb-2">Reset profile?</h2>
+            <p className="text-sm text-warm-500 leading-relaxed mb-6">
+              You'll need to retake the personality test and re-enter your birth date.
+            </p>
+            <div className="space-y-2">
+              <button
+                onClick={handleReset}
+                className="w-full py-3 rounded-2xl text-sm font-medium text-red-500 bg-red-50 hover:bg-red-100 transition-colors"
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => setShowResetModal(false)}
+                className="w-full py-3 rounded-2xl text-sm font-medium text-warm-700 bg-warm-100 hover:bg-warm-200 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
