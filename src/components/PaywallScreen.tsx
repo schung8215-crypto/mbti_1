@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useRevenueCat, type PlanId } from '@/hooks/useRevenueCat'
+import HaruLogo from '@/components/HaruLogo'
 
 interface PaywallScreenProps {
   onDismiss?: () => void
@@ -42,17 +43,9 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
       }}
     >
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <div
-          style={{
-            fontFamily: '"Lora", serif',
-            fontWeight: 600,
-            fontSize: 32,
-            color: '#c67d5c',
-            marginBottom: 8,
-          }}
-        >
-          Haru
+      <div style={{ marginBottom: 40 }}>
+        <div style={{ marginBottom: 20 }}>
+          <HaruLogo variant="light" size="sm" showSubtitle={false} align="left" />
         </div>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#4a4340', marginBottom: 8 }}>
           Continue Your Haru
