@@ -94,6 +94,12 @@ export default function OnboardingBirthdatePage() {
       setDateError("Birth date can't be in the future.");
       return;
     }
+    const age = today.getFullYear() - selected.getFullYear() -
+      (today < new Date(today.getFullYear(), selected.getMonth(), selected.getDate()) ? 1 : 0);
+    if (age < 13) {
+      setDateError("You must be at least 13 years old to use Haru.");
+      return;
+    }
 
     const result = calculateUserBirthPillar(
       parseInt(birthYear),
@@ -226,7 +232,8 @@ export default function OnboardingBirthdatePage() {
 
   if (subStep === "birthdate") {
     const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
+    const maxBirthYear = currentYear - 13;
+    const years = Array.from({ length: 100 }, (_, i) => maxBirthYear - i);
     const months = Array.from({ length: 12 }, (_, i) => i + 1);
     const daysInMonth = birthYear && birthMonth
       ? new Date(parseInt(birthYear), parseInt(birthMonth), 0).getDate()
