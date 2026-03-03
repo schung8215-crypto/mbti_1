@@ -55,7 +55,7 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
           Haru
         </div>
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#4a4340', marginBottom: 8 }}>
-          Continue Your Daily Practice
+          Continue Your Haru
         </h1>
         <p style={{ fontSize: 15, color: '#8a7e78', lineHeight: 1.6, maxWidth: 320, margin: '0 auto' }}>
           You&apos;ve experienced {daysUsed} days of personalized insights. Keep the momentum going.
@@ -265,6 +265,7 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
           margin: '0 auto 24px',
         }}
       >
+        <p style={{ fontSize: 14, color: '#8a7e78', marginBottom: 16, lineHeight: 1.5 }}>Unlock your full Haru — without limits.</p>
         <p style={{ fontSize: 12, fontWeight: 600, color: '#8a7e78', marginBottom: 12 }}>What&apos;s included</p>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[
@@ -309,7 +310,7 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
           fontFamily: 'inherit',
         }}
       >
-        {loading ? 'Processing...' : `Start ${selectedPlan === 'annual' ? 'Annual' : 'Monthly'} Plan`}
+        {loading ? 'Processing...' : 'Continue My Haru'}
       </button>
 
       {/* Maybe later */}
@@ -332,9 +333,9 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
       )}
 
       {/* Fine print */}
-      <p style={{ fontSize: 11, color: '#b0a8a0', textAlign: 'center', lineHeight: 1.5 }}>
-        Cancel anytime. Charged {selectedPlan === 'annual' ? 'annually' : 'monthly'}.<br />
-        Subscription auto-renews unless canceled.
+      <p style={{ fontSize: 11, color: '#b0a8a0', textAlign: 'center', lineHeight: 1.7 }}>
+        Renews automatically unless canceled at least 24 hours before renewal.<br />
+        Manage or cancel anytime in your App Store settings.
       </p>
     </div>
   )
