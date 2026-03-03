@@ -328,15 +328,10 @@ export default function AboutPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <div>
-                <h3 className="text-sm font-semibold text-warm-700 mb-1">A note on our approach</h3>
-                <p className="text-warm-600 text-xs leading-relaxed">
-                  Haru blends modern personality frameworks with traditional Korean wisdom to offer daily perspective and reflection.
-                </p>
-                <p className="text-warm-600 text-xs leading-relaxed mt-2">
-                  It&apos;s designed to support personal growth and self-understanding. Use the insights as a guide — not a rule — and trust your own judgment.
-                </p>
-              </div>
+              <p className="text-warm-600 text-xs leading-relaxed">
+                <span className="font-semibold text-warm-700">A note on our approach — </span>
+                Haru blends modern personality frameworks with traditional Korean wisdom to offer daily perspective and reflection. Use the insights as a guide — not a rule — and trust your own judgment.
+              </p>
             </div>
           </div>
         </div>
