@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { MBTI_DESCRIPTIONS } from "@/content/mbti-descriptions";
 
 interface MbtiPending {
@@ -13,6 +14,7 @@ interface MbtiPending {
 export default function OnboardingResultsPage() {
   const router = useRouter();
   const [pending, setPending] = useState<MbtiPending | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("mbti-pending");
@@ -24,6 +26,17 @@ export default function OnboardingResultsPage() {
       setPending(JSON.parse(stored));
     } catch {
       router.replace("/onboarding/intro");
+    }
+
+    // Check if user is already signed in
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      );
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setIsLoggedIn(!!session);
+      });
     }
   }, [router]);
 
@@ -90,11 +103,11 @@ export default function OnboardingResultsPage() {
             </ul>
 
             <button
-              onClick={() => router.push('/auth/login')}
+              onClick={() => router.push(isLoggedIn ? '/onboarding/birthdate' : '/auth/login')}
               className="w-full py-3 px-6 rounded-2xl font-semibold text-white transition-all"
               style={{ background: '#c67d5c' }}
             >
-              Create Free Account
+              {isLoggedIn ? 'Continue' : 'Create Free Account'}
             </button>
           </div>
         </div>
