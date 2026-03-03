@@ -92,7 +92,7 @@ export default function DailyCard({ message, isSaved, onSaveTap }: DailyCardProp
 
         {/* Energy meters */}
         <div className="px-6 py-4 bg-warm-50/50 border-b border-warm-100">
-          <div className="flex justify-around">
+          <div className="grid grid-cols-2 gap-6">
             <EnergyMeter
               label="Energy"
               value={message.energyLevel}
