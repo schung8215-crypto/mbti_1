@@ -40,7 +40,7 @@ export default function TrialBanner() {
           {daysRemaining === 1 ? '1 day left' : `${daysRemaining} days left`} in your trial
         </p>
         <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', margin: 0 }}>
-          Unlock unlimited insights for $29.99/year
+          Unlock unlimited insights for $44.99/year
         </p>
       </div>
       <button

@@ -164,7 +164,7 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
                   marginBottom: 8,
                 }}
               >
-                $2.50 per month
+                $3.75 per month
               </p>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -175,7 +175,7 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
                   color: selectedPlan === 'annual' ? 'white' : '#4a4340',
                 }}
               >
-                $29.99
+                $44.99
               </div>
               <div
                 style={{
@@ -230,7 +230,7 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
                   color: selectedPlan === 'monthly' ? 'white' : '#4a4340',
                 }}
               >
-                $4.99
+                $6.99
               </div>
               <div
                 style={{

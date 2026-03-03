@@ -196,11 +196,11 @@ export default function LockedInsightView() {
               marginBottom: 12,
             }}
           >
-            {rc.loading ? 'Processing...' : 'Resume for $29.99/year'}
+            {rc.loading ? 'Processing...' : 'Resume for $44.99/year'}
           </button>
 
           {/* Alternative */}
-          <p style={{ fontSize: 13, color: '#9a8f89', margin: 0 }}>or $4.99/month</p>
+          <p style={{ fontSize: 13, color: '#9a8f89', margin: 0 }}>or $6.99/month</p>
         </div>
 
         {/* Bottom link */}
