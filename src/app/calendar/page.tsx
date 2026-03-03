@@ -322,9 +322,9 @@ export default function CalendarPage() {
                     <span className={`text-[11px] font-medium ${today ? "text-terracotta-600" : "text-warm-700"}`}>
                       {dayInfo.day}
                     </span>
-                    <span className="text-xs leading-none">{elementIcons[dayInfo.pillar.element]}</span>
+                    <span style={{ fontSize: 9 }} className="leading-none">{elementIcons[dayInfo.pillar.element]}</span>
                     {hasReflection && (
-                      <svg className="w-2 h-2 text-red-400 absolute bottom-0.5 right-0.5" viewBox="0 0 24 24" fill="currentColor">
+                      <svg className="w-2.5 h-2.5 text-red-400 absolute bottom-1 right-1" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                     )}
