@@ -327,8 +327,7 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
 
       {/* Fine print */}
       <p style={{ fontSize: 11, color: '#b0a8a0', textAlign: 'center', lineHeight: 1.7 }}>
-        Renews automatically unless canceled at least 24 hours before renewal.<br />
-        Manage or cancel anytime in your App Store settings.
+        Renews automatically unless canceled at least 24 hours before renewal. Manage or cancel anytime in your App Store settings.
       </p>
     </div>
   )
