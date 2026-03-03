@@ -47,7 +47,7 @@ export default function AboutPage() {
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-warm-900 tracking-tight">How It Works</h1>
-            <p className="text-warm-500 text-sm mt-1">The science and wisdom behind your daily insights</p>
+            <p className="text-warm-600 text-sm mt-1">The science and wisdom behind your daily insights</p>
           </div>
 
           {/* Section 1: MBTI */}
@@ -73,7 +73,7 @@ export default function AboutPage() {
                   <div key={d.pair.join("")} className="bg-warm-50 rounded-2xl p-4">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-base">{d.icon}</span>
-                      <span className="text-xs font-semibold text-warm-500 uppercase tracking-wider">{d.desc}</span>
+                      <span className="text-xs font-semibold text-warm-600 uppercase tracking-wider">{d.desc}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="flex-1 text-center">
@@ -94,7 +94,7 @@ export default function AboutPage() {
                 ))}
               </div>
 
-              <p className="text-warm-500 text-xs leading-relaxed">
+              <p className="text-warm-600 text-xs leading-relaxed">
                 Together, these four letters (e.g. ENFP, INTJ) form one of 16 unique personality types,
                 describing how you think, interact, and make decisions.
               </p>
@@ -129,7 +129,7 @@ export default function AboutPage() {
                       <span className="text-2xl">{"\u2600\uFE0F"}</span>
                     </div>
                     <p className="text-xs font-semibold text-warm-700">10 Stems</p>
-                    <p className="text-[10px] text-warm-500">Heavenly</p>
+                    <p className="text-[10px] text-warm-600">Heavenly</p>
                   </div>
                   <div className="text-warm-300 text-2xl font-light">{"\u00D7"}</div>
                   <div className="text-center">
@@ -137,7 +137,7 @@ export default function AboutPage() {
                       <span className="text-2xl">{"\u{1F30F}"}</span>
                     </div>
                     <p className="text-xs font-semibold text-warm-700">12 Branches</p>
-                    <p className="text-[10px] text-warm-500">Earthly</p>
+                    <p className="text-[10px] text-warm-600">Earthly</p>
                   </div>
                   <div className="text-warm-300 text-2xl font-light">=</div>
                   <div className="text-center">
@@ -145,10 +145,10 @@ export default function AboutPage() {
                       <span className="text-2xl">{"\u{1F504}"}</span>
                     </div>
                     <p className="text-xs font-semibold text-warm-700">60-Cycle</p>
-                    <p className="text-[10px] text-warm-500">Unique energy</p>
+                    <p className="text-[10px] text-warm-600">Unique energy</p>
                   </div>
                 </div>
-                <p className="text-warm-500 text-xs mt-4 text-center leading-relaxed">
+                <p className="text-warm-600 text-xs mt-4 text-center leading-relaxed">
                   The 10 Heavenly Stems and 12 Earthly Branches combine to form a 60-cycle, where each day carries its own distinct energy.
                 </p>
               </div>
@@ -163,7 +163,7 @@ export default function AboutPage() {
                         <span className="text-xl">{el.icon}</span>
                       </div>
                       <p className="text-[11px] font-semibold text-warm-700">{el.name}</p>
-                      <p className="text-[9px] text-warm-500 leading-tight">{el.desc}</p>
+                      <p className="text-[9px] text-warm-600 leading-tight">{el.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -176,19 +176,19 @@ export default function AboutPage() {
                   <div className="bg-warm-50 rounded-2xl p-4">
                     <div className="text-2xl mb-2">🌙</div>
                     <p className="text-sm font-semibold text-warm-800 mb-1">Yin</p>
-                    <p className="text-xs text-warm-500 leading-relaxed">
+                    <p className="text-xs text-warm-600 leading-relaxed">
                       Receptive and introspective. You process deeply and recharge by going inward.
                     </p>
                   </div>
                   <div className="bg-warm-50 rounded-2xl p-4">
                     <div className="text-2xl mb-2">☀️</div>
                     <p className="text-sm font-semibold text-warm-800 mb-1">Yang</p>
-                    <p className="text-xs text-warm-500 leading-relaxed">
+                    <p className="text-xs text-warm-600 leading-relaxed">
                       Active and outward-facing. You're energized by doing and tend to think on your feet.
                     </p>
                   </div>
                 </div>
-                <p className="text-warm-400 text-xs mt-3 leading-relaxed">
+                <p className="text-warm-600 text-xs mt-3 leading-relaxed">
                   Each of the 10 Heavenly Stems carries a yin or yang quality — so your birth element is always either Yin Wood, Yang Fire, and so on.
                 </p>
               </div>
@@ -205,7 +205,7 @@ export default function AboutPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-warm-800">Generating Cycle</p>
-                      <p className="text-xs text-warm-500 leading-relaxed">
+                      <p className="text-xs text-warm-600 leading-relaxed">
                         Wood feeds Fire → Fire creates Earth → Earth bears Metal → Metal enriches Water → Water nourishes Wood
                       </p>
                     </div>
@@ -218,7 +218,7 @@ export default function AboutPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-warm-800">Controlling Cycle</p>
-                      <p className="text-xs text-warm-500 leading-relaxed">
+                      <p className="text-xs text-warm-600 leading-relaxed">
                         Wood parts Earth → Earth dams Water → Water quenches Fire → Fire melts Metal → Metal cuts Wood
                       </p>
                     </div>
@@ -226,7 +226,7 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              <p className="text-warm-500 text-xs leading-relaxed">
+              <p className="text-warm-600 text-xs leading-relaxed">
                 Your birth date gives you a core element that stays with you over time. Each day has its own element, creating a dynamic relationship with yours.
               </p>
             </div>
@@ -254,7 +254,7 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-sage-800">Your Personality Type</p>
-                    <p className="text-xs text-warm-500">Your personality &mdash; how you think and act</p>
+                    <p className="text-xs text-warm-600">Your personality &mdash; how you think and act</p>
                   </div>
                 </div>
 
@@ -272,7 +272,7 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-terracotta-700">Your Birth Element</p>
-                    <p className="text-xs text-warm-500">Your core energy &mdash; from your Saju birth date</p>
+                    <p className="text-xs text-warm-600">Your core energy &mdash; from your Saju birth date</p>
                   </div>
                 </div>
 
@@ -290,7 +290,7 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-amber-800">Today&apos;s Element</p>
-                    <p className="text-xs text-warm-500">Today&apos;s energy &mdash; from the 60-day cycle</p>
+                    <p className="text-xs text-warm-600">Today&apos;s energy &mdash; from the 60-day cycle</p>
                   </div>
                 </div>
 
@@ -308,20 +308,18 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-warm-900">Your Daily Insight</p>
-                    <p className="text-xs text-warm-500">A unique message just for you, every day</p>
-                    <p className="text-xs text-warm-400 mt-1" style={{ fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>Haru (하루) means &ldquo;day&rdquo; in Korean.</p>
+                    <p className="text-xs text-warm-600 whitespace-nowrap">A unique message for you, every day</p>
+                    <p className="text-xs text-warm-500 mt-1" style={{ fontStyle: 'italic', fontFamily: 'Georgia, serif' }}>Haru (하루) means &ldquo;day&rdquo; in Korean.</p>
                   </div>
                 </div>
               </div>
 
-              <p className="text-warm-500 text-xs leading-relaxed mt-2">
-                With your personality type, your birth stem, and the 60-day cycle interacting, your daily insight evolves across thousands of possible variations — tailored to who you are and the energy of the day.
-              </p>
             </div>
           </div>
 
           {/* Section 4: Disclaimer */}
           <div className="bg-warm-100 rounded-3xl p-6 animate-slide-up">
+            <p className="text-sm font-semibold text-warm-800 mb-3">A note on our approach</p>
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 bg-warm-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                 <svg className="w-4 h-4 text-warm-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -329,7 +327,6 @@ export default function AboutPage() {
                 </svg>
               </div>
               <p className="text-warm-600 text-xs leading-relaxed">
-                <span className="font-semibold text-warm-700">A note on our approach — </span>
                 Haru blends modern personality frameworks with traditional Korean wisdom to offer daily perspective and reflection. Use the insights as a guide — not a rule — and trust your own judgment.
               </p>
             </div>
