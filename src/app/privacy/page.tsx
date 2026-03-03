@@ -143,7 +143,7 @@ export default function PrivacyPage() {
           </ul>
           <p style={{ marginTop: "12px" }}>
             To exercise your rights, contact us at{" "}
-            <a href="mailto:dev@kinsider.co.uk" style={styles.link}>dev@kinsider.co.uk</a>.
+            <a href="mailto:info@kinsider.co.uk" style={styles.link}>info@kinsider.co.uk</a>.
             If you are located in the UK or EEA, you may also lodge a complaint with your
             local data protection authority.
           </p>
@@ -205,7 +205,7 @@ export default function PrivacyPage() {
             Covent Garden<br />
             London WC2H 9JQ<br />
             United Kingdom<br />
-            <a href="mailto:dev@kinsider.co.uk" style={styles.link}>dev@kinsider.co.uk</a>
+            <a href="mailto:info@kinsider.co.uk" style={styles.link}>info@kinsider.co.uk</a>
           </address>
         </section>
       </div>

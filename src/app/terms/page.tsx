@@ -217,7 +217,7 @@ export default function TermsPage() {
             Covent Garden<br />
             London WC2H 9JQ<br />
             United Kingdom<br />
-            <a href="mailto:dev@kinsider.co.uk" style={styles.link}>dev@kinsider.co.uk</a>
+            <a href="mailto:info@kinsider.co.uk" style={styles.link}>info@kinsider.co.uk</a>
           </address>
         </section>
       </div>

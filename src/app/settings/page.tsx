@@ -184,7 +184,7 @@ export default function SettingsPage() {
             <p className="text-xs font-semibold text-warm-400 uppercase tracking-wider px-1 mb-2">Support</p>
             <div className="bg-white rounded-2xl shadow-soft overflow-hidden divide-y divide-warm-100">
               <a
-                href="mailto:dev@kinsider.co.uk"
+                href="mailto:info@kinsider.co.uk"
                 className="block px-4 py-3.5 flex items-center justify-between"
               >
                 <p className="text-sm text-warm-900">Contact us</p>
@@ -193,7 +193,7 @@ export default function SettingsPage() {
                 </svg>
               </a>
               <a
-                href="mailto:dev@kinsider.co.uk?subject=Problem%20report"
+                href="mailto:info@kinsider.co.uk?subject=Problem%20report"
                 className="block px-4 py-3.5 flex items-center justify-between"
               >
                 <p className="text-sm text-warm-900">Report an issue</p>

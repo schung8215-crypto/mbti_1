@@ -190,7 +190,7 @@ export default function TermsOfServicePage() {
                 <p>Covent Garden</p>
                 <p>London WC2H 9JQ</p>
                 <p>United Kingdom</p>
-                <a href="mailto:dev@kinsider.co.uk" className="text-terracotta underline">dev@kinsider.co.uk</a>
+                <a href="mailto:info@kinsider.co.uk" className="text-terracotta underline">info@kinsider.co.uk</a>
               </address>
             </div>
 
