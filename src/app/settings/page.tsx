@@ -10,6 +10,7 @@ export default function SettingsPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [restoreMessage, setRestoreMessage] = useState<string | null>(null);
   const rc = useRevenueCat();
 
@@ -52,6 +53,17 @@ export default function SettingsPage() {
       setEmail(data.user?.email ?? null);
     });
   }, []);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    await supabase.auth.signOut();
+    localStorage.removeItem("mbti-saju-user");
+    router.replace("/onboarding/intro");
+  };
 
   const handleDeleteAccount = async () => {
     setDeleting(true);
@@ -101,6 +113,13 @@ export default function SettingsPage() {
                 <p className="text-sm text-warm-900">Email</p>
                 <p className="text-sm text-warm-400 mt-0.5">{email ?? "Not signed in"}</p>
               </div>
+              <button
+                onClick={handleSignOut}
+                disabled={signingOut}
+                className="w-full text-left px-4 py-3.5"
+              >
+                <p className="text-sm text-warm-500">{signingOut ? "Signing out…" : "Sign out"}</p>
+              </button>
             </div>
           </section>
 
@@ -194,8 +213,7 @@ export default function SettingsPage() {
               Delete account
             </button>
             <p className="text-xs text-warm-400 text-center mt-2 leading-relaxed">
-              This permanently removes your Haru profile and stored data.<br />
-              Subscription cancellation must be done via your app store.
+              This permanently removes your Haru profile and stored data. Subscription cancellation must be done via your app store.
             </p>
           </div>
 

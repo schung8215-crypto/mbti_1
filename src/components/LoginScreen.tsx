@@ -46,6 +46,10 @@ export default function LoginScreen() {
   const router = useRouter()
   const [loading, setLoading] = useState<'apple' | 'google' | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [showEmailForm, setShowEmailForm] = useState(false)
+  const [email, setEmail] = useState('')
+  const [emailSent, setEmailSent] = useState(false)
+  const [emailLoading, setEmailLoading] = useState(false)
 
   // Redirect signed-in users away from login page
   useEffect(() => {
@@ -103,6 +107,28 @@ export default function LoginScreen() {
     } catch (err: any) {
       setError(err.message || 'Sign in failed. Please try again.')
       setLoading(null)
+    }
+  }
+
+  const sendMagicLink = async () => {
+    if (!email.trim()) return
+    try {
+      setEmailLoading(true)
+      setError(null)
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      })
+      if (error) throw error
+      setEmailSent(true)
+    } catch (err: any) {
+      setError(err.message || 'Could not send link. Please try again.')
+    } finally {
+      setEmailLoading(false)
     }
   }
 
@@ -332,6 +358,93 @@ export default function LoginScreen() {
             )}
           </button>
         </div>
+
+        {/* Divider */}
+        <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
+          <span style={{ fontSize: 12, color: '#b0a8a0' }}>or</span>
+          <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
+        </div>
+
+        {/* Email magic link */}
+        {!showEmailForm && !emailSent && (
+          <button
+            onClick={() => setShowEmailForm(true)}
+            style={{
+              width: '100%',
+              padding: '14px 20px',
+              background: 'none',
+              border: '1.5px solid #ede8e3',
+              borderRadius: 14,
+              color: '#8a7e78',
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: 'pointer',
+              marginBottom: 16,
+              fontFamily: 'inherit',
+            }}
+          >
+            Continue with Email
+          </button>
+        )}
+
+        {showEmailForm && !emailSent && (
+          <div style={{ width: '100%', marginBottom: 16 }}>
+            <input
+              type="email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMagicLink()}
+              style={{
+                width: '100%',
+                padding: '14px 16px',
+                border: '1.5px solid #ede8e3',
+                borderRadius: 14,
+                fontSize: 15,
+                color: '#4a4340',
+                background: 'white',
+                fontFamily: 'inherit',
+                marginBottom: 10,
+                boxSizing: 'border-box',
+                outline: 'none',
+              }}
+            />
+            <button
+              onClick={sendMagicLink}
+              disabled={emailLoading || !email.trim()}
+              style={{
+                width: '100%',
+                padding: '14px 20px',
+                background: emailLoading || !email.trim() ? '#b0a8a0' : '#c67d5c',
+                border: 'none',
+                borderRadius: 14,
+                color: 'white',
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: emailLoading || !email.trim() ? 'not-allowed' : 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              {emailLoading ? 'Sending…' : 'Send magic link'}
+            </button>
+          </div>
+        )}
+
+        {emailSent && (
+          <div style={{
+            width: '100%',
+            padding: '16px',
+            background: '#f0faf5',
+            border: '1.5px solid #86efac',
+            borderRadius: 14,
+            textAlign: 'center',
+            marginBottom: 16,
+          }}>
+            <p style={{ fontSize: 15, fontWeight: 600, color: '#166534', marginBottom: 4 }}>Check your inbox</p>
+            <p style={{ fontSize: 13, color: '#4a4340' }}>We sent a sign-in link to <strong>{email}</strong></p>
+          </div>
+        )}
 
         {/* Error */}
         {error && (
