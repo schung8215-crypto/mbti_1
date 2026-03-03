@@ -115,6 +115,8 @@ export default function ProfilePage() {
 
   const handleReset = () => {
     localStorage.removeItem("mbti-saju-user");
+    localStorage.removeItem("mbti-pending");
+    localStorage.removeItem("mbti-saju-reflections");
     router.push("/onboarding/intro");
   };
 
@@ -529,7 +531,7 @@ export default function ProfilePage() {
           <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-xl p-6 animate-slide-up">
             <h2 className="text-base font-semibold text-warm-900 mb-2">Reset profile?</h2>
             <p className="text-sm text-warm-500 leading-relaxed mb-6">
-              You'll need to retake the personality test and re-enter your birth date.
+              This will clear your personality type, birth date, and all saved reflections. You'll need to start over from the beginning.
             </p>
             <div className="space-y-2">
               <button
