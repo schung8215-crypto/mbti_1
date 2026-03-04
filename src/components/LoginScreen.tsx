@@ -323,7 +323,7 @@ export default function LoginScreen() {
 
         {/* Apple + Google icon buttons */}
         {!emailSent && (
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'row', gap: 12, marginBottom: 16 }}>
             <button
               onClick={() => signIn('apple')}
               disabled={loading !== null}
