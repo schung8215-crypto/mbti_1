@@ -290,82 +290,6 @@ export default function LoginScreen() {
           </p>
         </div>
 
-        {/* Buttons */}
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
-          {/* Apple */}
-          <button
-            onClick={() => signIn('apple')}
-            disabled={loading !== null}
-            style={{
-              width: '100%',
-              padding: '14px 20px',
-              background: '#000',
-              border: 'none',
-              borderRadius: 14,
-              color: 'white',
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 10,
-              opacity: loading === 'google' ? 0.5 : 1,
-              transition: 'opacity 0.2s ease',
-              fontFamily: 'inherit',
-            }}
-          >
-            {loading === 'apple' ? (
-              <span>Signing in...</span>
-            ) : (
-              <>
-                <AppleIcon />
-                Continue with Apple
-              </>
-            )}
-          </button>
-
-          {/* Google */}
-          <button
-            onClick={() => signIn('google')}
-            disabled={loading !== null}
-            style={{
-              width: '100%',
-              padding: '14px 20px',
-              background: 'white',
-              border: '1.5px solid #ede8e3',
-              borderRadius: 14,
-              color: '#4a4340',
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 10,
-              opacity: loading === 'apple' ? 0.5 : 1,
-              transition: 'opacity 0.2s ease',
-              fontFamily: 'inherit',
-            }}
-          >
-            {loading === 'google' ? (
-              <span>Signing in...</span>
-            ) : (
-              <>
-                <GoogleIcon />
-                Continue with Google
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Divider */}
-        <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-          <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
-          <span style={{ fontSize: 12, color: '#b0a8a0' }}>or</span>
-          <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
-        </div>
-
         {/* Email magic link */}
         {!showEmailForm && !emailSent && (
           <button
@@ -373,19 +297,71 @@ export default function LoginScreen() {
             style={{
               width: '100%',
               padding: '14px 20px',
-              background: 'none',
-              border: '1.5px solid #ede8e3',
+              background: '#c67d5c',
+              border: 'none',
               borderRadius: 14,
-              color: '#8a7e78',
+              color: 'white',
               fontSize: 15,
               fontWeight: 600,
               cursor: 'pointer',
-              marginBottom: 16,
+              marginBottom: 12,
               fontFamily: 'inherit',
             }}
           >
             Continue with Email
           </button>
+        )}
+
+        {/* Divider */}
+        {!emailSent && (
+          <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+            <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
+            <span style={{ fontSize: 12, color: '#b0a8a0' }}>or</span>
+            <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
+          </div>
+        )}
+
+        {/* Apple + Google icon buttons */}
+        {!emailSent && (
+          <div style={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+            <button
+              onClick={() => signIn('apple')}
+              disabled={loading !== null}
+              style={{
+                padding: '14px',
+                background: '#000',
+                border: 'none',
+                borderRadius: 14,
+                color: 'white',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: loading === 'google' ? 0.5 : 1,
+                transition: 'opacity 0.2s ease',
+              }}
+            >
+              {loading === 'apple' ? <span style={{ fontSize: 12, color: 'white' }}>…</span> : <AppleIcon />}
+            </button>
+            <button
+              onClick={() => signIn('google')}
+              disabled={loading !== null}
+              style={{
+                padding: '14px',
+                background: 'white',
+                border: '1.5px solid #ede8e3',
+                borderRadius: 14,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: loading === 'apple' ? 0.5 : 1,
+                transition: 'opacity 0.2s ease',
+              }}
+            >
+              {loading === 'google' ? <span style={{ fontSize: 12, color: '#8a7e78' }}>…</span> : <GoogleIcon />}
+            </button>
+          </div>
         )}
 
         {showEmailForm && !emailSent && (
