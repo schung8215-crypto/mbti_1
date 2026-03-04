@@ -323,13 +323,13 @@ export default function LoginScreen() {
 
         {/* Apple + Google icon buttons */}
         {!emailSent && (
-          <div style={{ width: '100%', display: 'flex', gap: 12, marginBottom: 16 }}>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
             <button
               onClick={() => signIn('apple')}
               disabled={loading !== null}
               style={{
-                flex: 1,
-                height: 52,
+                width: '100%',
+                padding: '14px 20px',
                 background: '#c67d5c',
                 border: 'none',
                 borderRadius: 14,
@@ -342,14 +342,14 @@ export default function LoginScreen() {
                 transition: 'opacity 0.2s ease',
               }}
             >
-              {loading === 'apple' ? <span style={{ fontSize: 11, color: 'white' }}>…</span> : <AppleIcon />}
+              {loading === 'apple' ? <span style={{ fontSize: 14, color: 'white' }}>…</span> : <AppleIcon />}
             </button>
             <button
               onClick={() => signIn('google')}
               disabled={loading !== null}
               style={{
-                flex: 1,
-                height: 52,
+                width: '100%',
+                padding: '14px 20px',
                 background: '#c67d5c',
                 border: 'none',
                 borderRadius: 14,
@@ -361,7 +361,7 @@ export default function LoginScreen() {
                 transition: 'opacity 0.2s ease',
               }}
             >
-              {loading === 'google' ? <span style={{ fontSize: 11, color: 'white' }}>…</span> : <GoogleIcon />}
+              {loading === 'google' ? <span style={{ fontSize: 14, color: 'white' }}>…</span> : <GoogleIcon />}
             </button>
           </div>
         )}
