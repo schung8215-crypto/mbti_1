@@ -718,15 +718,6 @@ function CompatibilityContent() {
     <main className="min-h-screen pb-20">
       <header className="px-6 pt-6 pb-4">
         <div className="max-w-md mx-auto">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-1 text-warm-500 hover:text-warm-700 transition-colors mb-2"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            <span className="text-sm">Back</span>
-          </button>
           <h1 className="text-xl font-bold text-warm-900 tracking-tight">Compatibility</h1>
           <p className="text-warm-500 text-sm mt-1">See how your energies align</p>
         </div>
