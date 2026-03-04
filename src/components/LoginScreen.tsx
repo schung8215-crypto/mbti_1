@@ -323,13 +323,13 @@ export default function LoginScreen() {
 
         {/* Apple + Google icon buttons */}
         {!emailSent && (
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 16 }}>
+          <div style={{ width: '100%', display: 'flex', gap: 12, marginBottom: 16 }}>
             <button
               onClick={() => signIn('apple')}
               disabled={loading !== null}
               style={{
-                width: 64,
-                height: 64,
+                flex: 1,
+                height: 52,
                 background: '#c67d5c',
                 border: 'none',
                 borderRadius: 14,
