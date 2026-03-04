@@ -348,11 +348,11 @@ export default function LoginScreen() {
               onClick={() => signIn('google')}
               disabled={loading !== null}
               style={{
-                width: 52,
+                flex: 1,
                 height: 52,
                 background: '#c67d5c',
                 border: 'none',
-                borderRadius: 12,
+                borderRadius: 14,
                 cursor: loading ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
