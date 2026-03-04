@@ -141,7 +141,7 @@ export default function PaywallScreen({ onDismiss, daysUsed = 7 }: PaywallScreen
                 letterSpacing: '0.05em',
               }}
             >
-              Save 50%
+              Save 46%
             </div>
           )}
 
