@@ -43,6 +43,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
         {/* iOS PWA / Capacitor WebView */}
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
