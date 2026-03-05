@@ -138,7 +138,7 @@ export default function LoginScreen() {
       )
       const { error } = await supabase.auth.signInWithOtp({
         email: email.trim(),
-        options: { emailRedirectTo: `https://haruapp.vercel.app/auth/callback` },
+        options: { emailRedirectTo: `https://haruapp.vercel.app/auth/confirm` },
       })
       if (error) throw error
       setEmailSent(true)
