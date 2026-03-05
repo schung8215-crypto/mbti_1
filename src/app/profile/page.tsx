@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createBrowserClient } from "@supabase/auth-helpers-nextjs";
 import BottomNav from "@/components/BottomNav";
 import { MBTI_DESCRIPTIONS } from "@/content/mbti-descriptions";
 import { calculateUserBirthPillar } from "@/lib/bazi";
@@ -118,6 +119,16 @@ export default function ProfilePage() {
     localStorage.removeItem("mbti-pending");
     localStorage.removeItem("mbti-saju-reflections");
     router.push("/onboarding/intro");
+  };
+
+  const handleSignOut = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    await supabase.auth.signOut();
+    localStorage.removeItem("mbti-saju-user");
+    router.push("/auth/login");
   };
 
   if (!userData) {
@@ -510,8 +521,14 @@ export default function ProfilePage() {
             </button>
           </div>
 
-          {/* Reset */}
-          <div className="pt-2 pb-4">
+          {/* Sign out + Reset */}
+          <div className="pt-2 pb-4 space-y-1">
+            <button
+              onClick={handleSignOut}
+              className="w-full py-3 px-4 rounded-xl text-warm-500 hover:text-warm-700 hover:bg-warm-100 transition-colors text-sm font-medium"
+            >
+              Sign Out
+            </button>
             <button
               onClick={() => setShowResetModal(true)}
               className="w-full py-3 px-4 rounded-xl text-warm-500 hover:text-red-500 hover:bg-red-50 transition-colors text-sm font-medium"
