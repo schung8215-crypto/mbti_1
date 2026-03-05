@@ -454,13 +454,9 @@ export default function LoginScreen() {
           }}
         >
           By continuing, you agree to our{' '}
-          <a href="/terms" style={{ color: '#c67d5c', textDecoration: 'underline' }}>
-            Terms of Service
-          </a>{' '}
+          <a href="/terms" style={{ color: '#c67d5c', textDecoration: 'underline' }}>Terms</a>{' '}
           and{' '}
-          <a href="/privacy" style={{ color: '#c67d5c', textDecoration: 'underline' }}>
-            Privacy Policy
-          </a>
+          <a href="/privacy" style={{ color: '#c67d5c', textDecoration: 'underline' }}>Privacy Policy</a>
         </p>
       </div>
     </div>
