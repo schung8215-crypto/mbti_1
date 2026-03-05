@@ -87,7 +87,7 @@ export default function OnboardingQuestionsPage() {
               {question.question}
             </h2>
 
-            <div className="space-y-3">
+            <div key={currentQuestion} className="space-y-3">
               <button
                 onClick={() => handleAnswer(question.optionA.type)}
                 className="w-full p-3 text-left rounded-2xl border-2 border-warm-200 hover:border-terracotta-400 hover:bg-terracotta-50/50 transition-all"
