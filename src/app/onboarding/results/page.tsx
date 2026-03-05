@@ -117,12 +117,12 @@ export default function OnboardingResultsPage() {
             <ul className="space-y-2">
               {[
                 "Your Saju profile — element, animal & yin/yang",
-                "Daily insights shaped by your type, birth stem, and the 60-day cycle",
-                "Compatibility based on both personality and elemental dynamics",
+                "Daily insights shaped by your type & birth stem",
+                "Compatibility by personality & elemental dynamics",
               ].map((text, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-warm-700">
-                  <span className="mt-1.5 w-1 h-1 rounded-full bg-terracotta-300 flex-shrink-0" />
-                  <span className="leading-relaxed">{text}</span>
+                <li key={i} className="flex items-center gap-2 text-sm">
+                  <span className="w-1 h-1 rounded-full bg-terracotta-400 flex-shrink-0" />
+                  <span className="text-terracotta-600 font-medium">{text}</span>
                 </li>
               ))}
             </ul>
