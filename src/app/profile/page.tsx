@@ -114,22 +114,11 @@ export default function ProfilePage() {
     setUserData(JSON.parse(storedUser));
   }, [router]);
 
-  const handleReset = async () => {
+  const handleReset = () => {
     localStorage.removeItem("mbti-saju-user");
     localStorage.removeItem("mbti-pending");
     localStorage.removeItem("mbti-saju-reflections");
-    // Mark onboarding as incomplete in Supabase so auth callback re-routes correctly
-    try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from("users").update({ onboarding_completed: false }).eq("id", user.id);
-      }
-    } catch {}
-    router.push("/onboarding/intro");
+    router.push("/onboarding/questions");
   };
 
   const handleSignOut = async () => {

@@ -21,7 +21,7 @@ export default function AuthCallbackPage() {
         .eq('id', userId)
         .single()
 
-      if (profile?.onboarding_completed && profile.mbti_type) {
+      if (profile?.mbti_type) {
         // Returning user — restore localStorage so /today works
         const bp = calculateUserBirthPillar(profile.birth_year, profile.birth_month, profile.birth_day)
         localStorage.setItem('mbti-saju-user', JSON.stringify({
@@ -43,9 +43,9 @@ export default function AuthCallbackPage() {
         }))
         window.location.href = '/today'
       } else {
-        // New user — go to birthdate if they completed the MBTI test, else start from intro
+        // New user — go to birthdate if they did the test, else straight to the test
         const hasPending = !!localStorage.getItem('mbti-pending')
-        window.location.href = hasPending ? '/onboarding/birthdate' : '/onboarding/intro'
+        window.location.href = hasPending ? '/onboarding/birthdate' : '/onboarding/questions'
       }
     }
 
