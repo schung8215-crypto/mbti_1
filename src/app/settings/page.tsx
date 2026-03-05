@@ -74,7 +74,16 @@ export default function SettingsPage() {
       );
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        await supabase.from("users").delete().eq("id", user.id);
+        await supabase.from("users").update({
+          mbti_type: null,
+          onboarding_completed: false,
+          birth_year: null,
+          birth_month: null,
+          birth_day: null,
+          birth_element: null,
+          birth_yin_yang: null,
+          birth_animal: null,
+        }).eq("id", user.id);
       }
       await supabase.auth.signOut();
     } catch {}
