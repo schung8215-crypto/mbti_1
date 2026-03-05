@@ -95,24 +95,24 @@ export default function OnboardingIntroPage() {
             {/* Two cards side by side */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               {/* MBTI */}
-              <div className="border border-warm-200 rounded-2xl p-3">
+              <div className="border border-warm-200 rounded-2xl p-3 flex flex-col">
                 <div className="w-9 h-9 bg-terracotta-50 rounded-xl flex items-center justify-center mb-2">
                   <span className="text-lg">💡</span>
                 </div>
                 <h3 className="font-semibold text-warm-900 text-sm mb-1">Personality Type</h3>
-                <p className="text-warm-500 text-xs leading-relaxed">
+                <p className="text-warm-500 text-xs leading-relaxed flex-1">
                   How you think, recharge, and make decisions.
                 </p>
               </div>
 
               {/* Saju */}
-              <div className="border border-warm-200 rounded-2xl p-3">
+              <div className="border border-warm-200 rounded-2xl p-3 flex flex-col">
                 <div className="w-9 h-9 bg-terracotta-50 rounded-xl flex items-center justify-center mb-2">
                   <span className="text-lg">☯️</span>
                 </div>
                 <h3 className="font-semibold text-warm-900 text-sm mb-1">Saju</h3>
-                <p className="text-warm-500 text-xs leading-relaxed">
-                  Your birth element, zodiac & yin/yang energy.
+                <p className="text-warm-500 text-xs leading-relaxed flex-1">
+                  Element, zodiac & yin/yang from your birth date.
                 </p>
               </div>
             </div>
