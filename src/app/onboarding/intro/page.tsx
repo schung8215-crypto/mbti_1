@@ -101,7 +101,7 @@ export default function OnboardingIntroPage() {
                 </div>
                 <h3 className="font-semibold text-warm-900 text-sm mb-1">Personality Type</h3>
                 <p className="text-warm-500 text-xs leading-relaxed">
-                  Your personality type reflects how you recharge, take in information, and make decisions.
+                  How you think, recharge, and make decisions.
                 </p>
               </div>
 
@@ -112,7 +112,7 @@ export default function OnboardingIntroPage() {
                 </div>
                 <h3 className="font-semibold text-warm-900 text-sm mb-1">Saju</h3>
                 <p className="text-warm-500 text-xs leading-relaxed">
-                  Your birth date reveals your element, animal sign, and yin/yang — and how they interact with today's energy.
+                  Your birth element, zodiac & yin/yang — and their energy today.
                 </p>
               </div>
             </div>
