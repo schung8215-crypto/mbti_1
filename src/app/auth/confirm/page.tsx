@@ -64,15 +64,18 @@ export default function AuthConfirmPage() {
   }, [router])
 
   return (
-    <main style={{ minHeight: '100dvh', background: '#f5f3ef', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ textAlign: 'center' }}>
+    <main style={{ minHeight: '100dvh', background: '#f5f3ef', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ textAlign: 'center', maxWidth: 340, width: '100%' }}>
         <div style={{
           width: 48, height: 48, borderRadius: '50%',
           border: '3px solid #ede8e3', borderTopColor: '#c67d5c',
           margin: '0 auto 16px',
           animation: 'spin 1s linear infinite',
         }} />
-        <p style={{ color: '#9a8f89', fontSize: 14 }}>Signing you in…</p>
+        <p style={{ color: '#9a8f89', fontSize: 14, marginBottom: 16 }}>Signing you in…</p>
+        <p style={{ color: '#b0a8a0', fontSize: 11, wordBreak: 'break-all' }}>
+          {typeof window !== 'undefined' ? window.location.href : ''}
+        </p>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     </main>
