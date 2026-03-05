@@ -242,26 +242,26 @@ export default function LoginScreen() {
           </div>
           <div
             style={{
+              fontFamily: '"Gowun Batang", serif',
+              fontWeight: 700,
+              fontSize: 14,
+              color: '#b0a8a0',
+              marginBottom: 6,
+            }}
+          >
+            하루
+          </div>
+          <div
+            style={{
               fontFamily: '"DM Sans", sans-serif',
               fontWeight: 500,
               fontSize: 11,
               color: '#8a7e78',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              marginBottom: 6,
             }}
           >
             Your day, revealed
-          </div>
-          <div
-            style={{
-              fontFamily: '"Gowun Batang", serif',
-              fontWeight: 700,
-              fontSize: 14,
-              color: '#b0a8a0',
-            }}
-          >
-            하루
           </div>
         </div>
 
