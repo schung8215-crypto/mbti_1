@@ -151,37 +151,42 @@ export default function LoginScreen() {
       setEmailLoading(true)
       setError(null)
       const supabase = getSupabase()
-
-      // Try sign in first
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password.trim(),
       })
-
-      if (!signInError && signInData.session) {
-        await redirectAfterAuth(signInData.session.user.id)
-        return
-      }
-
-      // If user doesn't exist, create account
-      if (signInError?.message?.includes('Invalid login credentials')) {
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email: email.trim(),
-          password: password.trim(),
-        })
-        if (signUpError) throw signUpError
-        if (signUpData.session) {
-          await redirectAfterAuth(signUpData.session.user.id)
-        } else {
-          // Email confirmation required — tell user to check inbox
-          setError('Account created! Check your inbox to confirm your email, then sign in.')
-        }
-        return
-      }
-
-      throw signInError
+      if (error) throw error
+      if (data.session) await redirectAfterAuth(data.session.user.id)
     } catch (err: any) {
-      setError(err.message || 'Sign in failed. Please try again.')
+      const msg = err.message || ''
+      if (msg.includes('Invalid login credentials')) {
+        setError('Wrong password, or this email was registered with Google. Try Google sign-in above, or create a new account.')
+      } else {
+        setError(msg || 'Sign in failed. Please try again.')
+      }
+    } finally {
+      setEmailLoading(false)
+    }
+  }
+
+  const signUpWithEmail = async () => {
+    if (!email.trim() || !password.trim()) return
+    try {
+      setEmailLoading(true)
+      setError(null)
+      const supabase = getSupabase()
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password: password.trim(),
+      })
+      if (error) throw error
+      if (data.session) {
+        await redirectAfterAuth(data.session.user.id)
+      } else {
+        setError('Check your inbox to confirm your email, then sign in.')
+      }
+    } catch (err: any) {
+      setError(err.message || 'Sign up failed. Please try again.')
     } finally {
       setEmailLoading(false)
     }
@@ -418,10 +423,22 @@ export default function LoginScreen() {
                 background: emailLoading || !email.trim() || !password.trim() ? '#b0a8a0' : '#c67d5c',
                 border: 'none', borderRadius: 14, color: 'white', fontSize: 15, fontWeight: 600,
                 cursor: emailLoading || !email.trim() || !password.trim() ? 'not-allowed' : 'pointer',
+                fontFamily: 'inherit', marginBottom: 8,
+              }}
+            >
+              {emailLoading ? '…' : 'Sign in'}
+            </button>
+            <button
+              onClick={signUpWithEmail}
+              disabled={emailLoading || !email.trim() || !password.trim()}
+              style={{
+                width: '100%', padding: '14px 20px', background: 'transparent',
+                border: '1.5px solid #c67d5c', borderRadius: 14, color: '#c67d5c', fontSize: 15, fontWeight: 600,
+                cursor: emailLoading || !email.trim() || !password.trim() ? 'not-allowed' : 'pointer',
                 fontFamily: 'inherit',
               }}
             >
-              {emailLoading ? 'Signing in…' : 'Continue'}
+              Create account
             </button>
           </div>
         )}
