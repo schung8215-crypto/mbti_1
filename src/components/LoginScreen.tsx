@@ -95,15 +95,32 @@ export default function LoginScreen() {
       )
 
       const options: Parameters<typeof supabase.auth.signInWithOAuth>[0]['options'] = {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `https://haruapp.vercel.app/auth/callback`,
+        skipBrowserRedirect: true,
       }
       if (provider === 'google') {
         options.queryParams = { access_type: 'offline', prompt: 'consent' }
       }
 
       const { data, error } = await supabase.auth.signInWithOAuth({ provider, options })
-
       if (error) throw error
+
+      if (data?.url) {
+        try {
+          const { Browser } = await import('@capacitor/browser')
+          const { App } = await import('@capacitor/app')
+          await Browser.open({ url: data.url, windowName: '_self' })
+          App.addListener('appUrlOpen', async ({ url }) => {
+            if (url.includes('/auth/callback')) {
+              await Browser.close()
+              window.location.href = url
+            }
+          })
+        } catch {
+          // Fallback for web
+          window.location.href = data.url
+        }
+      }
     } catch (err: any) {
       setError(err.message || 'Sign in failed. Please try again.')
       setLoading(null)

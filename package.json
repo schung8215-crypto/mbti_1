@@ -11,6 +11,8 @@
   "dependencies": {
     "@aharris02/bazi-calculator-by-alvamind": "^1.0.0",
     "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.3",
+    "@capacitor/browser": "^6.0.6",
     "@capacitor/core": "^6.0.0",
     "@capacitor/ios": "^6.0.0",
     "@capacitor/push-notifications": "^6.0.0",
