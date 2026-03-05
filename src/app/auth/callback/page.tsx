@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { createBrowserClient } from '@supabase/auth-helpers-nextjs'
+import { calculateUserBirthPillar } from '@/lib/bazi'
 
 export default function AuthCallbackPage() {
   useEffect(() => {
@@ -23,13 +24,41 @@ export default function AuthCallbackPage() {
         return
       }
 
+      const userId = data.session.user.id
+
       const { data: profile } = await supabase
         .from('users')
-        .select('onboarding_completed')
-        .eq('id', data.session.user.id)
+        .select('onboarding_completed, mbti_type, birth_year, birth_month, birth_day, birth_stem, birth_branch, birth_element, birth_yin_yang, birth_animal, mbti_title, tagline, tagline_subtitle')
+        .eq('id', userId)
         .single()
 
-      window.location.href = profile?.onboarding_completed ? '/today' : '/onboarding/birthdate'
+      if (profile?.onboarding_completed && profile.mbti_type) {
+        // Returning user — restore localStorage so /today works
+        const bp = calculateUserBirthPillar(profile.birth_year, profile.birth_month, profile.birth_day)
+        const localData = {
+          mbtiType: profile.mbti_type,
+          birthYear: profile.birth_year,
+          birthMonth: profile.birth_month,
+          birthDay: profile.birth_day,
+          birthStem: profile.birth_stem,
+          birthBranch: profile.birth_branch,
+          birthElement: profile.birth_element,
+          birthYinYang: profile.birth_yin_yang,
+          birthAnimal: profile.birth_animal || bp.birthAnimal,
+          yearStem: bp.yearStem,
+          yearBranch: bp.yearBranch,
+          mbtiTitle: profile.mbti_title || '',
+          tagline: profile.tagline || '',
+          taglineSubtitle: profile.tagline_subtitle || '',
+          supabaseId: userId,
+        }
+        localStorage.setItem('mbti-saju-user', JSON.stringify(localData))
+        window.location.href = '/today'
+      } else {
+        // New user or reset user — check if they've already taken the MBTI test
+        const hasPending = !!localStorage.getItem('mbti-pending')
+        window.location.href = hasPending ? '/onboarding/birthdate' : '/onboarding/intro'
+      }
     })
   }, [])
 

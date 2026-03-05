@@ -128,7 +128,7 @@ export default function OnboardingResultsPage() {
             </ul>
 
             <button
-              onClick={() => router.push(isLoggedIn ? '/onboarding/birthdate' : '/auth/login')}
+              onClick={() => router.push('/onboarding/birthdate')}
               className="w-full py-3 px-6 rounded-2xl font-semibold transition-all"
               style={{ background: 'transparent', border: '2px solid #c67d5c', color: '#c67d5c' }}
             >
