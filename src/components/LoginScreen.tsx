@@ -48,32 +48,72 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null)
   const [showEmailForm, setShowEmailForm] = useState(false)
   const [email, setEmail] = useState('')
-  const [emailSent, setEmailSent] = useState(false)
+  const [otpSent, setOtpSent] = useState(false)
+  const [otp, setOtp] = useState('')
   const [emailLoading, setEmailLoading] = useState(false)
+  const [otpLoading, setOtpLoading] = useState(false)
+
+  const getSupabase = () => createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
+  const redirectAfterAuth = async (userId: string) => {
+    const supabase = getSupabase()
+    const { data: profile } = await supabase
+      .from('users')
+      .select('onboarding_completed')
+      .eq('id', userId)
+      .single()
+    if (!profile?.onboarding_completed) {
+      router.replace('/onboarding/birthdate')
+    } else {
+      router.replace('/today')
+    }
+  }
 
   useEffect(() => {
-    // Listen for App Links intercepting the OAuth callback URL
+    // Handle custom scheme redirect from OAuth (co.kinsider.haru://auth/callback?code=xxx)
     let cleanup: (() => void) | null = null
     import('@capacitor/app').then(({ App }) => {
-      App.addListener('appUrlOpen', ({ url }) => {
-        if (url.includes('/auth/callback') || url.includes('/auth/confirm')) {
-          window.location.href = url
+      App.addListener('appUrlOpen', async ({ url }) => {
+        if (url.startsWith('co.kinsider.haru://')) {
+          // Close the in-app browser
+          try {
+            const { Browser } = await import('@capacitor/browser')
+            await Browser.close()
+          } catch {}
+
+          // Extract code from custom scheme URL
+          const qs = url.split('?')[1] || ''
+          const params = new URLSearchParams(qs)
+          const code = params.get('code')
+
+          if (code) {
+            const supabase = getSupabase()
+            const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+            if (!error && data.session) {
+              await redirectAfterAuth(data.session.user.id)
+            } else {
+              setError('Sign in failed. Please try again.')
+              setLoading(null)
+            }
+          } else {
+            setError('Sign in failed. Please try again.')
+            setLoading(null)
+          }
         }
       }).then(handle => {
         cleanup = () => handle.remove()
       })
     }).catch(() => {})
     return () => { cleanup?.() }
-  }, [])
+  }, [router])
 
   // Redirect signed-in users away from login page
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') return
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    getSupabase().auth.getSession().then(({ data: { session } }) => {
       if (session) router.replace('/today')
     })
   }, [router])
@@ -104,13 +144,12 @@ export default function LoginScreen() {
     try {
       setLoading(provider)
       setError(null)
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
+      const supabase = getSupabase()
 
       const options: Parameters<typeof supabase.auth.signInWithOAuth>[0]['options'] = {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        // Custom scheme: no SHA-256 verification needed, Chrome Custom Tabs closes automatically
+        redirectTo: 'co.kinsider.haru://auth/callback',
+        skipBrowserRedirect: true,
       }
       if (provider === 'google') {
         options.queryParams = { access_type: 'offline', prompt: 'consent' }
@@ -118,31 +157,59 @@ export default function LoginScreen() {
 
       const { data, error } = await supabase.auth.signInWithOAuth({ provider, options })
       if (error) throw error
+
+      if (data?.url) {
+        try {
+          const { Browser } = await import('@capacitor/browser')
+          await Browser.open({ url: data.url })
+        } catch {
+          // Web fallback
+          window.location.href = data.url
+        }
+      }
     } catch (err: any) {
       setError(err.message || 'Sign in failed. Please try again.')
       setLoading(null)
     }
   }
 
-  const sendMagicLink = async () => {
+  const sendOtp = async () => {
     if (!email.trim()) return
     try {
       setEmailLoading(true)
       setError(null)
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
+      const supabase = getSupabase()
       const { error } = await supabase.auth.signInWithOtp({
         email: email.trim(),
-        options: { emailRedirectTo: `https://haruapp.vercel.app/auth/confirm` },
+        options: { shouldCreateUser: true },
       })
       if (error) throw error
-      setEmailSent(true)
+      setOtpSent(true)
     } catch (err: any) {
-      setError(err.message || 'Could not send link. Please try again.')
+      setError(err.message || 'Could not send code. Please try again.')
     } finally {
       setEmailLoading(false)
+    }
+  }
+
+  const verifyOtp = async () => {
+    if (!otp.trim()) return
+    try {
+      setOtpLoading(true)
+      setError(null)
+      const supabase = getSupabase()
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.trim(),
+        token: otp.trim(),
+        type: 'email',
+      })
+      if (error) throw error
+      if (data.session) {
+        await redirectAfterAuth(data.session.user.id)
+      }
+    } catch (err: any) {
+      setError(err.message || 'Invalid code. Please try again.')
+      setOtpLoading(false)
     }
   }
 
@@ -280,46 +347,23 @@ export default function LoginScreen() {
         </div>
 
         {/* Heading */}
-        {!emailSent && <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <h1
-            style={{
-              fontSize: 24,
-              fontWeight: 700,
-              color: '#4a4340',
-              marginBottom: 8,
-              fontFamily: 'inherit',
-            }}
-          >
+        {!otpSent && <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#4a4340', marginBottom: 8, fontFamily: 'inherit' }}>
             Welcome to Haru
           </h1>
-          <p
-            style={{
-              fontSize: 15,
-              color: '#8a7e78',
-              lineHeight: 1.5,
-              fontFamily: 'inherit',
-            }}
-          >
+          <p style={{ fontSize: 15, color: '#8a7e78', lineHeight: 1.5, fontFamily: 'inherit' }}>
             Sign in to discover your daily insight
           </p>
         </div>}
 
-        {/* Email magic link */}
-        {!showEmailForm && !emailSent && (
+        {/* Email button (collapsed) */}
+        {!showEmailForm && !otpSent && (
           <button
             onClick={() => setShowEmailForm(true)}
             style={{
-              width: '100%',
-              padding: '14px 20px',
-              background: 'none',
-              border: '1.5px solid #c67d5c',
-              borderRadius: 14,
-              color: '#c67d5c',
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: 'pointer',
-              marginBottom: 12,
-              fontFamily: 'inherit',
+              width: '100%', padding: '14px 20px', background: 'none',
+              border: '1.5px solid #c67d5c', borderRadius: 14, color: '#c67d5c',
+              fontSize: 14, fontWeight: 500, cursor: 'pointer', marginBottom: 12, fontFamily: 'inherit',
             }}
           >
             Continue with Email
@@ -327,7 +371,7 @@ export default function LoginScreen() {
         )}
 
         {/* Divider */}
-        {!emailSent && !showEmailForm && (
+        {!otpSent && !showEmailForm && (
           <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
             <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
             <span style={{ fontSize: 12, color: '#b0a8a0' }}>or</span>
@@ -336,24 +380,16 @@ export default function LoginScreen() {
         )}
 
         {/* Apple + Google icon buttons */}
-        {!emailSent && !showEmailForm && (
+        {!otpSent && !showEmailForm && (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'row', gap: 12, marginBottom: 16 }}>
             <button
               onClick={() => signIn('apple')}
               disabled={loading !== null}
               style={{
-                width: '100%',
-                padding: '14px 20px',
-                background: '#c67d5c',
-                border: 'none',
-                borderRadius: 14,
-                color: 'white',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: loading === 'google' ? 0.5 : 1,
-                transition: 'opacity 0.2s ease',
+                width: '100%', padding: '14px 20px', background: '#c67d5c', border: 'none',
+                borderRadius: 14, color: 'white', cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: loading === 'google' ? 0.5 : 1, transition: 'opacity 0.2s ease',
               }}
             >
               {loading === 'apple' ? <span style={{ fontSize: 14, color: 'white' }}>…</span> : <AppleIcon />}
@@ -362,17 +398,10 @@ export default function LoginScreen() {
               onClick={() => signIn('google')}
               disabled={loading !== null}
               style={{
-                width: '100%',
-                padding: '14px 20px',
-                background: '#c67d5c',
-                border: 'none',
-                borderRadius: 14,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: loading === 'apple' ? 0.5 : 1,
-                transition: 'opacity 0.2s ease',
+                width: '100%', padding: '14px 20px', background: '#c67d5c', border: 'none',
+                borderRadius: 14, cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: loading === 'apple' ? 0.5 : 1, transition: 'opacity 0.2s ease',
               }}
             >
               {loading === 'google' ? <span style={{ fontSize: 14, color: 'white' }}>…</span> : <GoogleIcon />}
@@ -380,93 +409,99 @@ export default function LoginScreen() {
           </div>
         )}
 
-        {showEmailForm && !emailSent && (
+        {/* Email form — send OTP */}
+        {showEmailForm && !otpSent && (
           <div style={{ width: '100%', marginBottom: 16 }}>
             <input
               type="email"
               placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && sendMagicLink()}
+              onKeyDown={(e) => e.key === 'Enter' && sendOtp()}
+              autoFocus
               style={{
-                width: '100%',
-                padding: '14px 16px',
-                border: '1.5px solid #ede8e3',
-                borderRadius: 14,
-                fontSize: 15,
-                color: '#4a4340',
-                background: 'white',
-                fontFamily: 'inherit',
-                marginBottom: 10,
-                boxSizing: 'border-box',
-                outline: 'none',
+                width: '100%', padding: '14px 16px', border: '1.5px solid #ede8e3',
+                borderRadius: 14, fontSize: 15, color: '#4a4340', background: 'white',
+                fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none',
               }}
             />
             <button
-              onClick={sendMagicLink}
+              onClick={sendOtp}
               disabled={emailLoading || !email.trim()}
               style={{
-                width: '100%',
-                padding: '14px 20px',
+                width: '100%', padding: '14px 20px',
                 background: emailLoading || !email.trim() ? '#b0a8a0' : '#c67d5c',
-                border: 'none',
-                borderRadius: 14,
-                color: 'white',
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: emailLoading || !email.trim() ? 'not-allowed' : 'pointer',
-                fontFamily: 'inherit',
+                border: 'none', borderRadius: 14, color: 'white', fontSize: 15, fontWeight: 600,
+                cursor: emailLoading || !email.trim() ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
               }}
             >
-              {emailLoading ? 'Sending…' : 'Send magic link'}
+              {emailLoading ? 'Sending…' : 'Send code'}
             </button>
           </div>
         )}
 
-        {emailSent && (
-          <div style={{
-            width: '100%',
-            padding: '16px',
-            background: '#f0f4f2',
-            border: '1.5px solid #5a8a7a',
-            borderRadius: 14,
-            textAlign: 'center',
-            marginBottom: 16,
-          }}>
-            <p style={{ fontSize: 15, fontWeight: 600, color: '#3d6b5e', marginBottom: 4 }}>Check your inbox</p>
-            <p style={{ fontSize: 13, color: '#4a4340' }}>We sent a sign-in link to <strong>{email}</strong></p>
+        {/* OTP verify — enter 6-digit code */}
+        {otpSent && (
+          <div style={{ width: '100%', marginBottom: 16 }}>
+            <div style={{
+              padding: '14px 16px', background: '#f0f4f2', border: '1.5px solid #5a8a7a',
+              borderRadius: 14, textAlign: 'center', marginBottom: 16,
+            }}>
+              <p style={{ fontSize: 15, fontWeight: 600, color: '#3d6b5e', marginBottom: 4 }}>Check your inbox</p>
+              <p style={{ fontSize: 13, color: '#4a4340' }}>Enter the 6-digit code sent to <strong>{email}</strong></p>
+            </div>
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="000000"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              onKeyDown={(e) => e.key === 'Enter' && verifyOtp()}
+              autoFocus
+              style={{
+                width: '100%', padding: '16px', border: '1.5px solid #ede8e3',
+                borderRadius: 14, fontSize: 24, color: '#4a4340', background: 'white',
+                fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box',
+                outline: 'none', textAlign: 'center', letterSpacing: '0.3em',
+              }}
+            />
+            <button
+              onClick={verifyOtp}
+              disabled={otpLoading || otp.length !== 6}
+              style={{
+                width: '100%', padding: '14px 20px',
+                background: otpLoading || otp.length !== 6 ? '#b0a8a0' : '#c67d5c',
+                border: 'none', borderRadius: 14, color: 'white', fontSize: 15, fontWeight: 600,
+                cursor: otpLoading || otp.length !== 6 ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              {otpLoading ? 'Verifying…' : 'Continue'}
+            </button>
+            <button
+              onClick={() => { setOtpSent(false); setOtp(''); setError(null) }}
+              style={{
+                width: '100%', marginTop: 10, padding: '10px', background: 'none', border: 'none',
+                color: '#8a7e78', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              Use a different email
+            </button>
           </div>
         )}
 
         {/* Error */}
         {error && (
-          <div
-            style={{
-              width: '100%',
-              padding: '12px 16px',
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              borderRadius: 12,
-              color: '#991b1b',
-              fontSize: 13,
-              lineHeight: 1.5,
-              marginBottom: 16,
-            }}
-          >
+          <div style={{
+            width: '100%', padding: '12px 16px', background: '#fef2f2',
+            border: '1px solid #fecaca', borderRadius: 12, color: '#991b1b',
+            fontSize: 13, lineHeight: 1.5, marginBottom: 16,
+          }}>
             {error}
           </div>
         )}
 
         {/* Privacy note */}
-        {!emailSent && <p
-          style={{
-            fontSize: 12,
-            color: '#b0a8a0',
-            textAlign: 'center',
-            lineHeight: 1.6,
-            fontFamily: 'inherit',
-          }}
-        >
+        {!otpSent && <p style={{ fontSize: 12, color: '#b0a8a0', textAlign: 'center', lineHeight: 1.6, fontFamily: 'inherit' }}>
           By continuing, you agree to our{' '}
           <a href="/terms" style={{ color: '#c67d5c', textDecoration: 'underline' }}>Terms</a>{' '}
           and{' '}
