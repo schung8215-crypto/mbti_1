@@ -6,8 +6,10 @@ import type { NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const tokenHash = searchParams.get('token_hash')
+  const type = searchParams.get('type')
 
-  if (!code) {
+  if (!code && !tokenHash) {
     return NextResponse.redirect(new URL('/auth/login', origin))
   }
 
@@ -30,11 +32,27 @@ export async function GET(request: NextRequest) {
     }
   )
 
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+  let session = null
+  if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+    if (error || !data.session) {
+      return NextResponse.redirect(new URL('/auth/login?error=auth_failed', origin))
+    }
+    session = data.session
+  } else if (tokenHash && type) {
+    const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: type as 'email' | 'magiclink' })
+    if (error || !data.session) {
+      return NextResponse.redirect(new URL('/auth/login?error=auth_failed', origin))
+    }
+    session = data.session
+  }
 
-  if (error || !data.session) {
+  if (!session) {
     return NextResponse.redirect(new URL('/auth/login?error=auth_failed', origin))
   }
+
+  // reuse session variable below
+  const data = { session }
 
   const { data: profile } = await supabase
     .from('users')

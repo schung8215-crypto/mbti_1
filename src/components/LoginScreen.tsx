@@ -48,24 +48,13 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null)
   const [showEmailForm, setShowEmailForm] = useState(false)
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [emailLoading, setEmailLoading] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
 
   const getSupabase = () => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
-
-  const redirectAfterAuth = async (userId: string) => {
-    const supabase = getSupabase()
-    const { data: profile } = await supabase
-      .from('users')
-      .select('onboarding_completed')
-      .eq('id', userId)
-      .single()
-    // Hard redirect so session cookies are sent with the fresh request
-    window.location.href = profile?.onboarding_completed ? '/today' : '/onboarding/birthdate'
-  }
 
   // appUrlOpen is handled globally in AppUrlHandler (layout.tsx)
 
@@ -142,48 +131,22 @@ export default function LoginScreen() {
     }
   }
 
-  const signInWithEmail = async () => {
-    if (!email.trim() || !password.trim()) return
+  const sendMagicLink = async () => {
+    if (!email.trim()) return
     try {
       setEmailLoading(true)
       setError(null)
       const supabase = getSupabase()
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithOtp({
         email: email.trim(),
-        password: password.trim(),
+        options: {
+          emailRedirectTo: 'https://haruapp.vercel.app/auth/callback',
+        },
       })
       if (error) throw error
-      if (data.session) await redirectAfterAuth(data.session.user.id)
+      setEmailSent(true)
     } catch (err: any) {
-      const msg = err.message || ''
-      if (msg.includes('Invalid login credentials')) {
-        setError('Wrong password, or this email was registered with Google. Try Google sign-in above, or create a new account.')
-      } else {
-        setError(msg || 'Sign in failed. Please try again.')
-      }
-    } finally {
-      setEmailLoading(false)
-    }
-  }
-
-  const signUpWithEmail = async () => {
-    if (!email.trim() || !password.trim()) return
-    try {
-      setEmailLoading(true)
-      setError(null)
-      const supabase = getSupabase()
-      const { data, error } = await supabase.auth.signUp({
-        email: email.trim(),
-        password: password.trim(),
-      })
-      if (error) throw error
-      if (data.session) {
-        await redirectAfterAuth(data.session.user.id)
-      } else {
-        setError('Check your inbox to confirm your email, then sign in.')
-      }
-    } catch (err: any) {
-      setError(err.message || 'Sign up failed. Please try again.')
+      setError(err.message || 'Failed to send link. Please try again.')
     } finally {
       setEmailLoading(false)
     }
@@ -385,14 +348,15 @@ export default function LoginScreen() {
           </div>
         )}
 
-        {/* Email + password form */}
-        {showEmailForm && (
+        {/* Magic link form */}
+        {showEmailForm && !emailSent && (
           <div style={{ width: '100%', marginBottom: 16 }}>
             <input
               type="email"
               placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMagicLink()}
               autoFocus
               style={{
                 width: '100%', padding: '14px 16px', border: '1.5px solid #ede8e3',
@@ -400,42 +364,37 @@ export default function LoginScreen() {
                 fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none',
               }}
             />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && signInWithEmail()}
-              style={{
-                width: '100%', padding: '14px 16px', border: '1.5px solid #ede8e3',
-                borderRadius: 14, fontSize: 15, color: '#4a4340', background: 'white',
-                fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none',
-              }}
-            />
             <button
-              onClick={signInWithEmail}
-              disabled={emailLoading || !email.trim() || !password.trim()}
+              onClick={sendMagicLink}
+              disabled={emailLoading || !email.trim()}
               style={{
                 width: '100%', padding: '14px 20px',
-                background: emailLoading || !email.trim() || !password.trim() ? '#b0a8a0' : '#c67d5c',
+                background: emailLoading || !email.trim() ? '#b0a8a0' : '#c67d5c',
                 border: 'none', borderRadius: 14, color: 'white', fontSize: 15, fontWeight: 600,
-                cursor: emailLoading || !email.trim() || !password.trim() ? 'not-allowed' : 'pointer',
-                fontFamily: 'inherit', marginBottom: 8,
-              }}
-            >
-              {emailLoading ? '…' : 'Sign in'}
-            </button>
-            <button
-              onClick={signUpWithEmail}
-              disabled={emailLoading || !email.trim() || !password.trim()}
-              style={{
-                width: '100%', padding: '14px 20px', background: 'transparent',
-                border: '1.5px solid #c67d5c', borderRadius: 14, color: '#c67d5c', fontSize: 15, fontWeight: 600,
-                cursor: emailLoading || !email.trim() || !password.trim() ? 'not-allowed' : 'pointer',
+                cursor: emailLoading || !email.trim() ? 'not-allowed' : 'pointer',
                 fontFamily: 'inherit',
               }}
             >
-              Create account
+              {emailLoading ? '…' : 'Send magic link'}
+            </button>
+          </div>
+        )}
+
+        {/* Sent confirmation */}
+        {showEmailForm && emailSent && (
+          <div style={{
+            width: '100%', padding: '20px 16px', background: '#f0faf6',
+            border: '1px solid #bbf0d8', borderRadius: 14, textAlign: 'center', marginBottom: 16,
+          }}>
+            <p style={{ fontSize: 15, fontWeight: 600, color: '#166534', marginBottom: 6 }}>Check your inbox</p>
+            <p style={{ fontSize: 13, color: '#4a7c59', lineHeight: 1.5 }}>
+              We sent a sign-in link to <strong>{email}</strong>. Tap it to continue.
+            </p>
+            <button
+              onClick={() => { setEmailSent(false); setEmail('') }}
+              style={{ marginTop: 12, fontSize: 13, color: '#c67d5c', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontFamily: 'inherit' }}
+            >
+              Use a different email
             </button>
           </div>
         )}
