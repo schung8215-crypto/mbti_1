@@ -330,7 +330,7 @@ export default function LoginScreen() {
         )}
 
         {/* Divider */}
-        {!emailSent && (
+        {!emailSent && !showEmailForm && (
           <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
             <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
             <span style={{ fontSize: 12, color: '#b0a8a0' }}>or</span>
@@ -339,7 +339,7 @@ export default function LoginScreen() {
         )}
 
         {/* Apple + Google icon buttons */}
-        {!emailSent && (
+        {!emailSent && !showEmailForm && (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'row', gap: 12, marginBottom: 16 }}>
             <button
               onClick={() => signIn('apple')}
