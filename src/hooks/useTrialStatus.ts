@@ -39,7 +39,7 @@ export function useTrialStatus(): TrialStatusResult {
         // Get user profile from DB
         const { data: profile, error: profileError } = await supabase
           .from('users')
-          .select('subscription_status, trial_ends_at, subscription_ends_at')
+          .select('subscription_status, trial_ends_at')
           .eq('id', user.id)
           .single()
 
