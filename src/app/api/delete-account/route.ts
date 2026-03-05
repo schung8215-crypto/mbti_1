@@ -1,38 +1,28 @@
-import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export async function POST() {
-  const cookieStore = await cookies()
-
-  // Regular client to get the current user
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
-        },
-      },
-    }
-  )
-
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-  }
-
-  // Admin client with service role key to delete auth user
+export async function POST(request: NextRequest) {
   const admin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { autoRefreshToken: false, persistSession: false } }
   )
 
-  // Delete from users table first, then delete auth user
+  // Get access token from Authorization header
+  const authHeader = request.headers.get('Authorization')
+  if (!authHeader?.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+  }
+  const accessToken = authHeader.slice(7)
+
+  // Verify the token and get user
+  const { data: { user }, error: userError } = await admin.auth.getUser(accessToken)
+  if (userError || !user) {
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+  }
+
+  // Delete from users table and auth
   await admin.from('users').delete().eq('id', user.id)
   const { error } = await admin.auth.admin.deleteUser(user.id)
 

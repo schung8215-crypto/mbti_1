@@ -68,13 +68,27 @@ export default function SettingsPage() {
   const handleDeleteAccount = async () => {
     setDeleting(true);
     try {
-      const res = await fetch('/api/delete-account', { method: 'POST' });
-      if (!res.ok) throw new Error('Delete failed');
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not signed in');
+      const res = await fetch('/api/delete-account', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Delete failed');
+      }
+      await supabase.auth.signOut();
       localStorage.removeItem("mbti-saju-user");
       localStorage.removeItem("mbti-pending");
       localStorage.removeItem("mbti-saju-reflections");
-      router.replace("/onboarding/intro");
-    } catch {
+      window.location.href = "/onboarding/intro";
+    } catch (err: any) {
+      alert('Could not delete account: ' + (err?.message || 'unknown error'));
       setDeleting(false);
       setShowDeleteModal(false);
     }
