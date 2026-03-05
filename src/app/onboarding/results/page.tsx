@@ -116,9 +116,9 @@ export default function OnboardingResultsPage() {
 
             <ul className="space-y-2">
               {[
-                "Your Saju profile — element, animal & yin/yang",
+                "Your Saju profile — element, zodiac & yin/yang",
                 "Daily insights shaped by your type & birth stem",
-                "Compatibility by personality & elemental dynamics",
+                "Compatibility by personality & element",
               ].map((text, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm">
                   <span className="w-1 h-1 rounded-full bg-terracotta-400 flex-shrink-0" />
