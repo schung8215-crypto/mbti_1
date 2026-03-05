@@ -13,19 +13,11 @@ export default function AuthConfirmPage() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const handleSession = async () => {
-      // Supabase client automatically picks up tokens from hash fragment
-      const { data: { session } } = await supabase.auth.getSession()
-
-      if (!session) {
-        router.replace('/auth/login?error=auth_failed')
-        return
-      }
-
+    const redirect = async (userId: string) => {
       const { data: profile } = await supabase
         .from('users')
         .select('onboarding_completed')
-        .eq('id', session.user.id)
+        .eq('id', userId)
         .single()
 
       if (!profile?.onboarding_completed) {
@@ -35,7 +27,40 @@ export default function AuthConfirmPage() {
       }
     }
 
-    handleSession()
+    // Handle token_hash from query params (PKCE magic link flow)
+    const params = new URLSearchParams(window.location.search)
+    const token_hash = params.get('token_hash')
+    const type = params.get('type')
+
+    if (token_hash && type) {
+      supabase.auth.verifyOtp({ token_hash, type: type as any }).then(({ data, error }) => {
+        if (error || !data.user) {
+          router.replace('/auth/login?error=auth_failed')
+        } else {
+          redirect(data.user.id)
+        }
+      })
+      return
+    }
+
+    // Handle hash fragment (implicit flow) via onAuthStateChange
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        subscription.unsubscribe()
+        redirect(session.user.id)
+      }
+    })
+
+    // Timeout fallback
+    const timeout = setTimeout(() => {
+      subscription.unsubscribe()
+      router.replace('/auth/login?error=auth_failed')
+    }, 8000)
+
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timeout)
+    }
   }, [router])
 
   return (
