@@ -19,15 +19,16 @@ export async function POST(request: NextRequest) {
   // Verify the token and get user
   const { data: { user }, error: userError } = await admin.auth.getUser(accessToken)
   if (userError || !user) {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    return NextResponse.json({ error: 'Invalid token: ' + userError?.message }, { status: 401 })
   }
 
   // Delete from users table and auth
-  await admin.from('users').delete().eq('id', user.id)
-  const { error } = await admin.auth.admin.deleteUser(user.id)
+  const { error: tableError } = await admin.from('users').delete().eq('id', user.id)
+  if (tableError) console.error('Table delete error:', tableError)
 
+  const { error } = await admin.auth.admin.deleteUser(user.id)
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'Auth delete error: ' + error.message }, { status: 500 })
   }
 
   return NextResponse.json({ success: true })
