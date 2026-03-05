@@ -413,13 +413,13 @@ export default function LoginScreen() {
           <div style={{
             width: '100%',
             padding: '16px',
-            background: '#f0faf5',
-            border: '1.5px solid #86efac',
+            background: '#f0f4f2',
+            border: '1.5px solid #5a8a7a',
             borderRadius: 14,
             textAlign: 'center',
             marginBottom: 16,
           }}>
-            <p style={{ fontSize: 15, fontWeight: 600, color: '#166534', marginBottom: 4 }}>Check your inbox</p>
+            <p style={{ fontSize: 15, fontWeight: 600, color: '#3d6b5e', marginBottom: 4 }}>Check your inbox</p>
             <p style={{ fontSize: 13, color: '#4a4340' }}>We sent a sign-in link to <strong>{email}</strong></p>
           </div>
         )}
