@@ -15,17 +15,22 @@ export default function OnboardingQuestionsPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [scores, setScores] = useState<MbtiScores>(getInitialScores());
   const [answerHistory, setAnswerHistory] = useState<string[]>([]);
+  const [selectedOption, setSelectedOption] = useState<'A' | 'B' | null>(null);
 
   const progress = ((currentQuestion + 1) / MBTI_QUESTIONS.length) * 100;
 
-  const handleAnswer = (type: string) => {
+  const handleAnswer = (type: string, option: 'A' | 'B') => {
+    setSelectedOption(option);
     const newScores = { ...scores, [type]: scores[type as keyof MbtiScores] + 1 };
-    setScores(newScores);
-    setAnswerHistory([...answerHistory, type]);
 
-    if (currentQuestion < MBTI_QUESTIONS.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
+    setTimeout(() => {
+      setSelectedOption(null);
+      setScores(newScores);
+      setAnswerHistory([...answerHistory, type]);
+
+      if (currentQuestion < MBTI_QUESTIONS.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
       const mbtiType = calculateMbtiType(newScores);
       const description = MBTI_DESCRIPTIONS[mbtiType];
       localStorage.setItem(
@@ -36,8 +41,9 @@ export default function OnboardingQuestionsPage() {
           scores: newScores,
         })
       );
-      router.push("/onboarding/results");
-    }
+        router.push("/onboarding/results");
+      }
+    }, 200);
   };
 
   const handleBack = () => {
@@ -89,14 +95,22 @@ export default function OnboardingQuestionsPage() {
 
             <div key={currentQuestion} className="space-y-3">
               <button
-                onClick={() => handleAnswer(question.optionA.type)}
-                className="w-full p-3 text-left rounded-2xl border-2 border-warm-200 hover:border-terracotta-400 hover:bg-terracotta-50/50 transition-all"
+                onClick={() => handleAnswer(question.optionA.type, 'A')}
+                className={`w-full p-3 text-left rounded-2xl border-2 transition-all ${
+                  selectedOption === 'A'
+                    ? 'border-terracotta-400 bg-terracotta-50/50'
+                    : 'border-warm-200'
+                }`}
               >
                 <span className="text-warm-700 text-sm">{question.optionA.text}</span>
               </button>
               <button
-                onClick={() => handleAnswer(question.optionB.type)}
-                className="w-full p-3 text-left rounded-2xl border-2 border-warm-200 hover:border-terracotta-400 hover:bg-terracotta-50/50 transition-all"
+                onClick={() => handleAnswer(question.optionB.type, 'B')}
+                className={`w-full p-3 text-left rounded-2xl border-2 transition-all ${
+                  selectedOption === 'B'
+                    ? 'border-terracotta-400 bg-terracotta-50/50'
+                    : 'border-warm-200'
+                }`}
               >
                 <span className="text-warm-700 text-sm">{question.optionB.text}</span>
               </button>
