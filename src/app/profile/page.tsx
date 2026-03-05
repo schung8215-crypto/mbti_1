@@ -114,10 +114,20 @@ export default function ProfilePage() {
     setUserData(JSON.parse(storedUser));
   }, [router]);
 
-  const handleReset = () => {
+  const handleReset = async () => {
     localStorage.removeItem("mbti-saju-user");
     localStorage.removeItem("mbti-pending");
     localStorage.removeItem("mbti-saju-reflections");
+    try {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from("users").update({ mbti_type: null, onboarding_completed: false }).eq("id", user.id);
+      }
+    } catch {}
     router.push("/onboarding/questions");
   };
 
