@@ -68,15 +68,8 @@ export default function SettingsPage() {
   const handleDeleteAccount = async () => {
     setDeleting(true);
     try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from("users").delete().eq("id", user.id);
-        await supabase.auth.signOut();
-      }
+      const res = await fetch('/api/delete-account', { method: 'POST' });
+      if (!res.ok) throw new Error('Delete failed');
       localStorage.removeItem("mbti-saju-user");
       localStorage.removeItem("mbti-pending");
       localStorage.removeItem("mbti-saju-reflections");
