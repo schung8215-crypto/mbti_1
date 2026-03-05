@@ -2,20 +2,26 @@
 
 import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { calculateUserBirthPillar } from '@/lib/bazi'
 
 export default function AuthCallbackPage() {
   const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
-    const supabase = createBrowserClient(
+    // Plain client reads PKCE verifier from localStorage (same as where login page stored it)
+    const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { auth: { flowType: 'implicit' } }
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    // Cookie-backed client to persist session for the rest of the app
+    const browserSupabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
     const redirectAfterSession = async (userId: string) => {
-      const { data: profile } = await supabase
+      const { data: profile } = await browserSupabase
         .from('users')
         .select('onboarding_completed, mbti_type, birth_year, birth_month, birth_day, birth_stem, birth_branch, birth_element, birth_yin_yang, birth_animal, mbti_title, tagline, tagline_subtitle')
         .eq('id', userId)
@@ -59,6 +65,11 @@ export default function AuthCallbackPage() {
           setTimeout(() => { window.location.href = '/auth/login' }, 6000)
           return
         }
+        // Bridge session to cookie-backed client so the rest of the app can read it
+        await browserSupabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        })
         await redirectAfterSession(data.session.user.id)
       })
     } else {
