@@ -11,21 +11,7 @@ export default function AuthCallbackPage() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const code = new URLSearchParams(window.location.search).get('code')
-
-    if (!code) {
-      window.location.href = '/auth/login'
-      return
-    }
-
-    supabase.auth.exchangeCodeForSession(code).then(async ({ data, error }) => {
-      if (error || !data.session) {
-        window.location.href = '/auth/login'
-        return
-      }
-
-      const userId = data.session.user.id
-
+    const redirectAfterSession = async (userId: string) => {
       const { data: profile } = await supabase
         .from('users')
         .select('onboarding_completed, mbti_type, birth_year, birth_month, birth_day, birth_stem, birth_branch, birth_element, birth_yin_yang, birth_animal, mbti_title, tagline, tagline_subtitle')
@@ -35,7 +21,7 @@ export default function AuthCallbackPage() {
       if (profile?.onboarding_completed && profile.mbti_type) {
         // Returning user — restore localStorage so /today works
         const bp = calculateUserBirthPillar(profile.birth_year, profile.birth_month, profile.birth_day)
-        const localData = {
+        localStorage.setItem('mbti-saju-user', JSON.stringify({
           mbtiType: profile.mbti_type,
           birthYear: profile.birth_year,
           birthMonth: profile.birth_month,
@@ -51,15 +37,46 @@ export default function AuthCallbackPage() {
           tagline: profile.tagline || '',
           taglineSubtitle: profile.tagline_subtitle || '',
           supabaseId: userId,
-        }
-        localStorage.setItem('mbti-saju-user', JSON.stringify(localData))
+        }))
         window.location.href = '/today'
       } else {
-        // New user or reset user — check if they've already taken the MBTI test
+        // New user — go to birthdate if they completed the MBTI test, else start from intro
         const hasPending = !!localStorage.getItem('mbti-pending')
         window.location.href = hasPending ? '/onboarding/birthdate' : '/onboarding/intro'
       }
-    })
+    }
+
+    const code = new URLSearchParams(window.location.search).get('code')
+
+    if (code) {
+      // PKCE flow — exchange code for session
+      supabase.auth.exchangeCodeForSession(code).then(async ({ data, error }) => {
+        if (error || !data.session) {
+          window.location.href = '/auth/login'
+          return
+        }
+        await redirectAfterSession(data.session.user.id)
+      })
+    } else {
+      // Implicit flow — tokens arrive in URL hash, Supabase processes them automatically
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          subscription.unsubscribe()
+          redirectAfterSession(session.user.id)
+        }
+      })
+
+      // Fallback: if no auth event fires within 8 seconds, go to login
+      const timeout = setTimeout(() => {
+        subscription.unsubscribe()
+        window.location.href = '/auth/login'
+      }, 8000)
+
+      return () => {
+        subscription.unsubscribe()
+        clearTimeout(timeout)
+      }
+    }
   }, [])
 
   return (
