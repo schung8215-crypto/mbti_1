@@ -51,6 +51,21 @@ export default function LoginScreen() {
   const [emailSent, setEmailSent] = useState(false)
   const [emailLoading, setEmailLoading] = useState(false)
 
+  useEffect(() => {
+    // Listen for App Links intercepting the OAuth callback URL
+    let cleanup: (() => void) | null = null
+    import('@capacitor/app').then(({ App }) => {
+      App.addListener('appUrlOpen', ({ url }) => {
+        if (url.includes('/auth/callback') || url.includes('/auth/confirm')) {
+          window.location.href = url
+        }
+      }).then(handle => {
+        cleanup = () => handle.remove()
+      })
+    }).catch(() => {})
+    return () => { cleanup?.() }
+  }, [])
+
   // Redirect signed-in users away from login page
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') return
