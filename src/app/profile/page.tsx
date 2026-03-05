@@ -131,16 +131,6 @@ export default function ProfilePage() {
     router.push("/onboarding/questions");
   };
 
-  const handleSignOut = async () => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    await supabase.auth.signOut();
-    localStorage.removeItem("mbti-saju-user");
-    router.push("/auth/login");
-  };
-
   if (!userData) {
     return null;
   }
@@ -531,14 +521,8 @@ export default function ProfilePage() {
             </button>
           </div>
 
-          {/* Sign out + Reset */}
-          <div className="pt-2 pb-4 space-y-1">
-            <button
-              onClick={handleSignOut}
-              className="w-full py-3 px-4 rounded-xl text-warm-500 hover:text-warm-700 hover:bg-warm-100 transition-colors text-sm font-medium"
-            >
-              Sign Out
-            </button>
+          {/* Reset */}
+          <div className="pt-2 pb-4">
             <button
               onClick={() => setShowResetModal(true)}
               className="w-full py-3 px-4 rounded-xl text-warm-500 hover:text-red-500 hover:bg-red-50 transition-colors text-sm font-medium"
