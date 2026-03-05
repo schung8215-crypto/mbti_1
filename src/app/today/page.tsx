@@ -69,7 +69,43 @@ export default function TodayPage() {
     const storedUser = localStorage.getItem("mbti-saju-user");
 
     if (!storedUser) {
-      router.push("/onboarding/intro");
+      // No local data — check if authenticated and restore from Supabase
+      import('@supabase/auth-helpers-nextjs').then(({ createBrowserClient }) => {
+        const supabase = createBrowserClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        )
+        supabase.auth.getUser().then(async ({ data: { user: authUser } }) => {
+          if (!authUser) {
+            router.push("/onboarding/intro")
+            return
+          }
+          const { data: profile } = await supabase
+            .from('users')
+            .select('mbti_type, birth_year, birth_month, birth_day, birth_stem, birth_branch, birth_element, birth_yin_yang, birth_animal, mbti_title, tagline, tagline_subtitle')
+            .eq('id', authUser.id)
+            .single()
+          if (!profile?.mbti_type) {
+            router.push("/onboarding/questions")
+            return
+          }
+          const { calculateUserBirthPillar } = await import('@/lib/bazi')
+          const bp = calculateUserBirthPillar(profile.birth_year, profile.birth_month, profile.birth_day)
+          const localData = {
+            mbtiType: profile.mbti_type, birthYear: profile.birth_year,
+            birthMonth: profile.birth_month, birthDay: profile.birth_day,
+            birthStem: profile.birth_stem, birthBranch: profile.birth_branch,
+            birthElement: profile.birth_element, birthYinYang: profile.birth_yin_yang,
+            birthAnimal: profile.birth_animal || bp.birthAnimal,
+            yearStem: bp.yearStem, yearBranch: bp.yearBranch,
+            mbtiTitle: profile.mbti_title || '', tagline: profile.tagline || '',
+            taglineSubtitle: profile.tagline_subtitle || '', supabaseId: authUser.id,
+          }
+          localStorage.setItem("mbti-saju-user", JSON.stringify(localData))
+          setUserData(localData as UserData)
+          setLoading(false)
+        })
+      })
       return;
     }
 
