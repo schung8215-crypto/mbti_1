@@ -4,8 +4,7 @@
 // Hip daily ritual, not mystical
 
 import { useState, useEffect } from 'react'
-import { createBrowserClient } from '@supabase/auth-helpers-nextjs'
-import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
 
 function AppleIcon() {
@@ -52,12 +51,6 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('')
   const [emailLoading, setEmailLoading] = useState(false)
 
-  // Plain client for OAuth — stores PKCE verifier in localStorage, survives cross-origin redirect
-  const getOAuthClient = () => createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-  // Cookie-backed client for session checks and email auth
   const getSupabase = () => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -134,8 +127,7 @@ export default function LoginScreen() {
         options.queryParams = { access_type: 'offline', prompt: 'consent' }
       }
 
-      const oauthClient = getOAuthClient()
-      const { data, error } = await oauthClient.auth.signInWithOAuth({ provider, options })
+      const { data, error } = await getSupabase().auth.signInWithOAuth({ provider, options })
       if (error) throw error
 
       if (isNative && data?.url) {
