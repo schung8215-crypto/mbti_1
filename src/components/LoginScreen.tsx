@@ -285,16 +285,6 @@ export default function LoginScreen() {
           </div>
         </div>
 
-        {/* Heading */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#4a4340', marginBottom: 8, fontFamily: 'inherit' }}>
-            Welcome to Haru
-          </h1>
-          <p style={{ fontSize: 15, color: '#8a7e78', lineHeight: 1.5, fontFamily: 'inherit' }}>
-            Sign in to discover your daily insight
-          </p>
-        </div>
-
         {/* Email button (collapsed) */}
         {!showEmailForm && (
           <button
