@@ -110,8 +110,8 @@ export default function OnboardingResultsPage() {
         >
           <div className="p-5 space-y-4">
             <div>
-              <p className="font-bold text-warm-900 text-base">Your personality type is just the beginning.</p>
-              <p className="text-warm-500 text-sm mt-1">Add your birth date to see how your profile interacts with today's energy.</p>
+              <p className="font-bold text-warm-900 text-base">Your personality type is just the beginning</p>
+              <p className="text-warm-500 text-sm mt-1">Add your birth date to see how your profile interacts with today's energy</p>
             </div>
 
             <ul className="space-y-2">
