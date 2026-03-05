@@ -526,12 +526,18 @@ export default function ProfilePage() {
 
       {/* Reset profile confirmation modal */}
       {showResetModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center px-4 pb-8">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setShowResetModal(false)} />
-          <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-xl p-6 animate-slide-up">
+        <div
+          className="fixed inset-0 flex items-end justify-center px-4 pb-8"
+          style={{ zIndex: 9999, background: 'rgba(0,0,0,0.4)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowResetModal(false) }}
+        >
+          <div
+            className="w-full max-w-sm bg-white rounded-3xl shadow-xl p-6 animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="text-base font-semibold text-warm-900 mb-2">Reset profile?</h2>
             <p className="text-sm text-warm-500 leading-relaxed mb-6">
-              This will clear your personality type, birth date, and all saved reflections. You'll need to start over from the beginning.
+              This will clear your personality type, birth date, and all saved reflections. You&apos;ll need to start over from the beginning.
             </p>
             <div className="space-y-2">
               <button
