@@ -9,8 +9,10 @@ import { NextResponse } from 'next/server'
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const token_hash = requestUrl.searchParams.get('token_hash')
+  const type = requestUrl.searchParams.get('type')
 
-  if (code) {
+  if (code || token_hash) {
     const cookieStore = cookies()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,8 +31,12 @@ export async function GET(request: Request) {
       }
     )
 
-    // Exchange code for session
-    await supabase.auth.exchangeCodeForSession(code)
+    // Exchange code (OAuth) or verify token hash (magic link)
+    if (code) {
+      await supabase.auth.exchangeCodeForSession(code)
+    } else if (token_hash && type) {
+      await supabase.auth.verifyOtp({ token_hash, type: type as any })
+    }
 
     // Get current user
     const {
