@@ -13,7 +13,10 @@ export async function GET(request: Request) {
   const type = requestUrl.searchParams.get('type')
 
   if (code || token_hash) {
+    // Build the redirect response first so we can attach cookies to it
+    const cookiesToSet: { name: string; value: string; options: any }[] = []
     const cookieStore = cookies()
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -22,10 +25,9 @@ export async function GET(request: Request) {
           getAll() {
             return cookieStore.getAll()
           },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options)
-            })
+          setAll(incoming) {
+            // Collect cookies — we'll apply them to the redirect response below
+            incoming.forEach((c) => cookiesToSet.push(c))
           },
         },
       }
@@ -38,32 +40,29 @@ export async function GET(request: Request) {
       await supabase.auth.verifyOtp({ token_hash, type: type as any })
     }
 
-    // Get current user
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
-      // Auth failed somehow
       return NextResponse.redirect(new URL('/auth/login?error=auth_failed', request.url))
     }
 
-    // Check if user has completed onboarding
     const { data: profile, error: profileError } = await supabase
       .from('users')
       .select('onboarding_completed')
       .eq('id', user.id)
       .single()
 
-    // If no profile OR onboarding not completed → send to birthdate step
-    if (profileError || !profile || !profile.onboarding_completed) {
-      return NextResponse.redirect(new URL('/onboarding/birthdate', request.url))
-    }
+    const destination = (profileError || !profile || !profile.onboarding_completed)
+      ? '/onboarding/birthdate'
+      : '/today'
 
-    // User exists and completed onboarding → send to daily screen
-    return NextResponse.redirect(new URL('/today', request.url))
+    // Create redirect and attach all session cookies to it
+    const response = NextResponse.redirect(new URL(destination, request.url))
+    cookiesToSet.forEach(({ name, value, options }) => {
+      response.cookies.set(name, value, options)
+    })
+    return response
   }
 
-  // No code in URL — something went wrong
   return NextResponse.redirect(new URL('/auth/login?error=no_code', request.url))
 }

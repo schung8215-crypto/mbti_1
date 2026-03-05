@@ -63,11 +63,8 @@ export default function LoginScreen() {
       .select('onboarding_completed')
       .eq('id', userId)
       .single()
-    if (!profile?.onboarding_completed) {
-      router.replace('/onboarding/birthdate')
-    } else {
-      router.replace('/today')
-    }
+    // Hard redirect so session cookies are sent with the fresh request
+    window.location.href = profile?.onboarding_completed ? '/today' : '/onboarding/birthdate'
   }
 
   // appUrlOpen is handled globally in AppUrlHandler (layout.tsx)
