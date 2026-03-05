@@ -120,17 +120,17 @@ export default function OnboardingResultsPage() {
                 "Daily insights shaped by your type & birth stem",
                 "Compatibility by personality & element",
               ].map((text, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm">
-                  <span className="w-1 h-1 rounded-full bg-terracotta-400 flex-shrink-0" />
-                  <span className="text-terracotta-600 font-medium">{text}</span>
+                <li key={i} className="flex items-center gap-2 text-sm text-warm-700">
+                  <span className="w-1 h-1 rounded-full bg-warm-300 flex-shrink-0" />
+                  <span>{text}</span>
                 </li>
               ))}
             </ul>
 
             <button
               onClick={() => router.push(isLoggedIn ? '/onboarding/birthdate' : '/auth/login')}
-              className="w-full py-3 px-6 rounded-2xl font-semibold text-white transition-all"
-              style={{ background: '#c67d5c' }}
+              className="w-full py-3 px-6 rounded-2xl font-semibold transition-all"
+              style={{ background: 'transparent', border: '2px solid #c67d5c', color: '#c67d5c' }}
             >
               {isLoggedIn ? 'Continue' : 'Create Free Account'}
             </button>
