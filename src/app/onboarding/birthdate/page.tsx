@@ -73,7 +73,7 @@ export default function OnboardingBirthdatePage() {
   useEffect(() => {
     const stored = localStorage.getItem("mbti-pending");
     if (!stored) {
-      router.replace("/onboarding/intro");
+      router.replace("/onboarding/questions");
       return;
     }
     try {

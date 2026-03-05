@@ -47,6 +47,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/today', origin))
   }
 
-  // New user — go to questions (they need to take the test first)
-  return NextResponse.redirect(new URL('/onboarding/questions', origin))
+  // New user — go to birthdate (birthdate page checks for mbti-pending and redirects to questions if missing)
+  return NextResponse.redirect(new URL('/onboarding/birthdate', origin))
 }
