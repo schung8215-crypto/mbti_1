@@ -67,31 +67,25 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     setDeleting(true);
-    try {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Not signed in');
-      const res = await fetch('/api/delete-account', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || 'Delete failed');
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    // Clear local data and navigate immediately
+    localStorage.removeItem("mbti-saju-user");
+    localStorage.removeItem("mbti-pending");
+    localStorage.removeItem("mbti-saju-reflections");
+    // Fire-and-forget: delete server-side in background
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        fetch('/api/delete-account', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        }).catch(() => {});
       }
-      localStorage.removeItem("mbti-saju-user");
-      localStorage.removeItem("mbti-pending");
-      localStorage.removeItem("mbti-saju-reflections");
-      supabase.auth.signOut().catch(() => {});
-      window.location.href = "/onboarding/intro";
-    } catch (err: any) {
-      alert('Could not delete account: ' + (err?.message || 'unknown error'));
-      setDeleting(false);
-      setShowDeleteModal(false);
-    }
+    });
+    supabase.auth.signOut().catch(() => {});
+    window.location.href = "/onboarding/intro";
   };
 
   return (
