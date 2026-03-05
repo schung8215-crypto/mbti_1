@@ -102,7 +102,11 @@ export default function TodayPage() {
             taglineSubtitle: profile.tagline_subtitle || '', supabaseId: authUser.id,
           }
           localStorage.setItem("mbti-saju-user", JSON.stringify(localData))
-          setUserData(localData as UserData)
+          const user = localData as UserData
+          setUserData(user)
+          const todayPillar = getTodayPillar()
+          setDailyMessage(generateDailyMessage(user, todayPillar))
+          setSavedReflections(loadReflections())
           setLoading(false)
         })
       })
