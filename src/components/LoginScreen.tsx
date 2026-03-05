@@ -48,10 +48,8 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null)
   const [showEmailForm, setShowEmailForm] = useState(false)
   const [email, setEmail] = useState('')
-  const [otpSent, setOtpSent] = useState(false)
-  const [otp, setOtp] = useState('')
+  const [password, setPassword] = useState('')
   const [emailLoading, setEmailLoading] = useState(false)
-  const [otpLoading, setOtpLoading] = useState(false)
 
   const getSupabase = () => createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -147,43 +145,45 @@ export default function LoginScreen() {
     }
   }
 
-  const sendOtp = async () => {
-    if (!email.trim()) return
+  const signInWithEmail = async () => {
+    if (!email.trim() || !password.trim()) return
     try {
       setEmailLoading(true)
       setError(null)
       const supabase = getSupabase()
-      const { error } = await supabase.auth.signInWithOtp({
+
+      // Try sign in first
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
-        options: { shouldCreateUser: true },
+        password: password.trim(),
       })
-      if (error) throw error
-      setOtpSent(true)
+
+      if (!signInError && signInData.session) {
+        await redirectAfterAuth(signInData.session.user.id)
+        return
+      }
+
+      // If user doesn't exist, create account
+      if (signInError?.message?.includes('Invalid login credentials')) {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: email.trim(),
+          password: password.trim(),
+        })
+        if (signUpError) throw signUpError
+        if (signUpData.session) {
+          await redirectAfterAuth(signUpData.session.user.id)
+        } else {
+          // Email confirmation required — tell user to check inbox
+          setError('Account created! Check your inbox to confirm your email, then sign in.')
+        }
+        return
+      }
+
+      throw signInError
     } catch (err: any) {
-      setError(err.message || 'Could not send code. Please try again.')
+      setError(err.message || 'Sign in failed. Please try again.')
     } finally {
       setEmailLoading(false)
-    }
-  }
-
-  const verifyOtp = async () => {
-    if (!otp.trim()) return
-    try {
-      setOtpLoading(true)
-      setError(null)
-      const supabase = getSupabase()
-      const { data, error } = await supabase.auth.verifyOtp({
-        email: email.trim(),
-        token: otp.trim(),
-        type: 'email',
-      })
-      if (error) throw error
-      if (data.session) {
-        await redirectAfterAuth(data.session.user.id)
-      }
-    } catch (err: any) {
-      setError(err.message || 'Invalid code. Please try again.')
-      setOtpLoading(false)
     }
   }
 
@@ -321,17 +321,17 @@ export default function LoginScreen() {
         </div>
 
         {/* Heading */}
-        {!otpSent && <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#4a4340', marginBottom: 8, fontFamily: 'inherit' }}>
             Welcome to Haru
           </h1>
           <p style={{ fontSize: 15, color: '#8a7e78', lineHeight: 1.5, fontFamily: 'inherit' }}>
             Sign in to discover your daily insight
           </p>
-        </div>}
+        </div>
 
         {/* Email button (collapsed) */}
-        {!showEmailForm && !otpSent && (
+        {!showEmailForm && (
           <button
             onClick={() => setShowEmailForm(true)}
             style={{
@@ -345,7 +345,7 @@ export default function LoginScreen() {
         )}
 
         {/* Divider */}
-        {!otpSent && !showEmailForm && (
+        {!showEmailForm && (
           <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
             <div style={{ flex: 1, height: 1, background: '#ede8e3' }} />
             <span style={{ fontSize: 12, color: '#b0a8a0' }}>or</span>
@@ -354,7 +354,7 @@ export default function LoginScreen() {
         )}
 
         {/* Apple + Google icon buttons */}
-        {!otpSent && !showEmailForm && (
+        {!showEmailForm && (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'row', gap: 12, marginBottom: 16 }}>
             <button
               onClick={() => signIn('apple')}
@@ -383,15 +383,14 @@ export default function LoginScreen() {
           </div>
         )}
 
-        {/* Email form — send OTP */}
-        {showEmailForm && !otpSent && (
+        {/* Email + password form */}
+        {showEmailForm && (
           <div style={{ width: '100%', marginBottom: 16 }}>
             <input
               type="email"
               placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && sendOtp()}
               autoFocus
               style={{
                 width: '100%', padding: '14px 16px', border: '1.5px solid #ede8e3',
@@ -399,66 +398,30 @@ export default function LoginScreen() {
                 fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none',
               }}
             />
-            <button
-              onClick={sendOtp}
-              disabled={emailLoading || !email.trim()}
-              style={{
-                width: '100%', padding: '14px 20px',
-                background: emailLoading || !email.trim() ? '#b0a8a0' : '#c67d5c',
-                border: 'none', borderRadius: 14, color: 'white', fontSize: 15, fontWeight: 600,
-                cursor: emailLoading || !email.trim() ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-              }}
-            >
-              {emailLoading ? 'Sending…' : 'Send code'}
-            </button>
-          </div>
-        )}
-
-        {/* OTP verify — enter 6-digit code */}
-        {otpSent && (
-          <div style={{ width: '100%', marginBottom: 16 }}>
-            <div style={{
-              padding: '14px 16px', background: '#f0f4f2', border: '1.5px solid #5a8a7a',
-              borderRadius: 14, textAlign: 'center', marginBottom: 16,
-            }}>
-              <p style={{ fontSize: 15, fontWeight: 600, color: '#3d6b5e', marginBottom: 4 }}>Check your inbox</p>
-              <p style={{ fontSize: 13, color: '#4a4340' }}>Enter the 6-digit code sent to <strong>{email}</strong></p>
-            </div>
             <input
-              type="text"
-              inputMode="numeric"
-              placeholder="000000"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              onKeyDown={(e) => e.key === 'Enter' && verifyOtp()}
-              autoFocus
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && signInWithEmail()}
               style={{
-                width: '100%', padding: '16px', border: '1.5px solid #ede8e3',
-                borderRadius: 14, fontSize: 24, color: '#4a4340', background: 'white',
-                fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box',
-                outline: 'none', textAlign: 'center', letterSpacing: '0.3em',
+                width: '100%', padding: '14px 16px', border: '1.5px solid #ede8e3',
+                borderRadius: 14, fontSize: 15, color: '#4a4340', background: 'white',
+                fontFamily: 'inherit', marginBottom: 10, boxSizing: 'border-box', outline: 'none',
               }}
             />
             <button
-              onClick={verifyOtp}
-              disabled={otpLoading || otp.length !== 6}
+              onClick={signInWithEmail}
+              disabled={emailLoading || !email.trim() || !password.trim()}
               style={{
                 width: '100%', padding: '14px 20px',
-                background: otpLoading || otp.length !== 6 ? '#b0a8a0' : '#c67d5c',
+                background: emailLoading || !email.trim() || !password.trim() ? '#b0a8a0' : '#c67d5c',
                 border: 'none', borderRadius: 14, color: 'white', fontSize: 15, fontWeight: 600,
-                cursor: otpLoading || otp.length !== 6 ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
+                cursor: emailLoading || !email.trim() || !password.trim() ? 'not-allowed' : 'pointer',
+                fontFamily: 'inherit',
               }}
             >
-              {otpLoading ? 'Verifying…' : 'Continue'}
-            </button>
-            <button
-              onClick={() => { setOtpSent(false); setOtp(''); setError(null) }}
-              style={{
-                width: '100%', marginTop: 10, padding: '10px', background: 'none', border: 'none',
-                color: '#8a7e78', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit',
-              }}
-            >
-              Use a different email
+              {emailLoading ? 'Signing in…' : 'Continue'}
             </button>
           </div>
         )}
@@ -475,12 +438,12 @@ export default function LoginScreen() {
         )}
 
         {/* Privacy note */}
-        {!otpSent && <p style={{ fontSize: 12, color: '#b0a8a0', textAlign: 'center', lineHeight: 1.6, fontFamily: 'inherit' }}>
+        <p style={{ fontSize: 12, color: '#b0a8a0', textAlign: 'center', lineHeight: 1.6, fontFamily: 'inherit' }}>
           By continuing, you agree to our{' '}
           <a href="/terms" style={{ color: '#c67d5c', textDecoration: 'underline' }}>Terms</a>{' '}
           and{' '}
           <a href="/privacy" style={{ color: '#c67d5c', textDecoration: 'underline' }}>Privacy Policy</a>
-        </p>}
+        </p>
       </div>
     </div>
   )

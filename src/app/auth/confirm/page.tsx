@@ -14,7 +14,7 @@ export default function AuthConfirmPage() {
     )
 
     const handleSession = async (session: { access_token: string; refresh_token: string; user: { id: string } }) => {
-      // On Android: redirect to custom scheme so the native app gets the session
+      // On Android: redirect to custom scheme so the native WebView gets the session
       if (/android/i.test(navigator.userAgent)) {
         const params = new URLSearchParams({
           access_token: session.access_token,
@@ -24,18 +24,14 @@ export default function AuthConfirmPage() {
         return
       }
 
-      // Web: navigate normally
+      // Web: hard redirect (not router.replace) so cookies are fully sent with the next request
       const { data: profile } = await supabase
         .from('users')
         .select('onboarding_completed')
         .eq('id', session.user.id)
         .single()
 
-      if (!profile?.onboarding_completed) {
-        router.replace('/onboarding/birthdate')
-      } else {
-        router.replace('/today')
-      }
+      window.location.href = profile?.onboarding_completed ? '/today' : '/onboarding/birthdate'
     }
 
     // Handle token_hash from query params (PKCE magic link flow)
