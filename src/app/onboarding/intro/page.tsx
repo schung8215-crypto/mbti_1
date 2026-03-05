@@ -112,7 +112,7 @@ export default function OnboardingIntroPage() {
                 </div>
                 <h3 className="font-semibold text-warm-900 text-sm mb-1">Saju</h3>
                 <p className="text-warm-500 text-xs leading-relaxed flex-1">
-                  Your birth element, zodiac & yin/yang.
+                  Birth element, zodiac & yin/yang energy.
                 </p>
               </div>
             </div>
