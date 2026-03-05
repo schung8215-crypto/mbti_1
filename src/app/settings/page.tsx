@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createBrowserClient } from "@supabase/auth-helpers-nextjs";
+import { createBrowserClient } from "@supabase/ssr";
 import { useRevenueCat } from "@/hooks/useRevenueCat";
 
 export default function SettingsPage() {
@@ -82,10 +82,10 @@ export default function SettingsPage() {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || 'Delete failed');
       }
-      await supabase.auth.signOut();
       localStorage.removeItem("mbti-saju-user");
       localStorage.removeItem("mbti-pending");
       localStorage.removeItem("mbti-saju-reflections");
+      supabase.auth.signOut().catch(() => {});
       window.location.href = "/onboarding/intro";
     } catch (err: any) {
       alert('Could not delete account: ' + (err?.message || 'unknown error'));
