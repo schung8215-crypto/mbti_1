@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Lora } from "next/font/google";
 import "./globals.css";
+import AppUrlHandler from "@/components/AppUrlHandler";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -47,7 +48,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <AppUrlHandler />
+        {children}
+      </body>
     </html>
   );
 }

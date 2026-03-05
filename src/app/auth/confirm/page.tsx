@@ -13,11 +13,22 @@ export default function AuthConfirmPage() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const redirect = async (userId: string) => {
+    const handleSession = async (session: { access_token: string; refresh_token: string; user: { id: string } }) => {
+      // On Android: redirect to custom scheme so the native app gets the session
+      if (/android/i.test(navigator.userAgent)) {
+        const params = new URLSearchParams({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+        })
+        window.location.href = `co.kinsider.haru://auth/callback?${params.toString()}`
+        return
+      }
+
+      // Web: navigate normally
       const { data: profile } = await supabase
         .from('users')
         .select('onboarding_completed')
-        .eq('id', userId)
+        .eq('id', session.user.id)
         .single()
 
       if (!profile?.onboarding_completed) {
@@ -34,10 +45,10 @@ export default function AuthConfirmPage() {
 
     if (token_hash && type) {
       supabase.auth.verifyOtp({ token_hash, type: type as any }).then(({ data, error }) => {
-        if (error || !data.user) {
+        if (error || !data.session) {
           router.replace('/auth/login?error=auth_failed')
         } else {
-          redirect(data.user.id)
+          handleSession(data.session)
         }
       })
       return
@@ -47,7 +58,7 @@ export default function AuthConfirmPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         subscription.unsubscribe()
-        redirect(session.user.id)
+        handleSession(session)
       }
     })
 

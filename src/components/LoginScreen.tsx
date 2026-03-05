@@ -72,43 +72,7 @@ export default function LoginScreen() {
     }
   }
 
-  useEffect(() => {
-    // Handle custom scheme redirect from OAuth (co.kinsider.haru://auth/callback?code=xxx)
-    let cleanup: (() => void) | null = null
-    import('@capacitor/app').then(({ App }) => {
-      App.addListener('appUrlOpen', async ({ url }) => {
-        if (url.startsWith('co.kinsider.haru://')) {
-          // Close the in-app browser
-          try {
-            const { Browser } = await import('@capacitor/browser')
-            await Browser.close()
-          } catch {}
-
-          // Extract code from custom scheme URL
-          const qs = url.split('?')[1] || ''
-          const params = new URLSearchParams(qs)
-          const code = params.get('code')
-
-          if (code) {
-            const supabase = getSupabase()
-            const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-            if (!error && data.session) {
-              await redirectAfterAuth(data.session.user.id)
-            } else {
-              setError('Sign in failed. Please try again.')
-              setLoading(null)
-            }
-          } else {
-            setError('Sign in failed. Please try again.')
-            setLoading(null)
-          }
-        }
-      }).then(handle => {
-        cleanup = () => handle.remove()
-      })
-    }).catch(() => {})
-    return () => { cleanup?.() }
-  }, [router])
+  // appUrlOpen is handled globally in AppUrlHandler (layout.tsx)
 
   // Redirect signed-in users away from login page
   useEffect(() => {
