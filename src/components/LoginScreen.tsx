@@ -383,11 +383,11 @@ export default function LoginScreen() {
         {/* Sent confirmation */}
         {showEmailForm && emailSent && (
           <div style={{
-            width: '100%', padding: '20px 16px', background: '#f0faf6',
-            border: '1px solid #bbf0d8', borderRadius: 14, textAlign: 'center', marginBottom: 16,
+            width: '100%', padding: '20px 16px', background: '#eef4f2',
+            border: '1px solid #c5ddd8', borderRadius: 14, textAlign: 'center', marginBottom: 16,
           }}>
-            <p style={{ fontSize: 15, fontWeight: 600, color: '#166534', marginBottom: 6 }}>Check your inbox</p>
-            <p style={{ fontSize: 13, color: '#4a7c59', lineHeight: 1.5 }}>
+            <p style={{ fontSize: 15, fontWeight: 600, color: '#5a8a7a', marginBottom: 6 }}>Check your inbox</p>
+            <p style={{ fontSize: 13, color: '#4a7c6e', lineHeight: 1.5 }}>
               We sent a sign-in link to <strong>{email}</strong>.
             </p>
             <button
