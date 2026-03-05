@@ -283,7 +283,7 @@ export default function LoginScreen() {
         </div>
 
         {/* Heading */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        {!emailSent && <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <h1
             style={{
               fontSize: 24,
@@ -305,7 +305,7 @@ export default function LoginScreen() {
           >
             Sign in to discover your daily insight
           </p>
-        </div>
+        </div>}
 
         {/* Email magic link */}
         {!showEmailForm && !emailSent && (
@@ -461,7 +461,7 @@ export default function LoginScreen() {
         )}
 
         {/* Privacy note */}
-        <p
+        {!emailSent && <p
           style={{
             fontSize: 12,
             color: '#b0a8a0',
@@ -474,7 +474,7 @@ export default function LoginScreen() {
           <a href="/terms" style={{ color: '#c67d5c', textDecoration: 'underline' }}>Terms</a>{' '}
           and{' '}
           <a href="/privacy" style={{ color: '#c67d5c', textDecoration: 'underline' }}>Privacy Policy</a>
-        </p>
+        </p>}
       </div>
     </div>
   )
