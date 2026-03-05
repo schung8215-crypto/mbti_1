@@ -146,11 +146,24 @@ export default function LoginScreen() {
       setError(null)
       const supabase = getSupabase()
 
-      const options: Parameters<typeof supabase.auth.signInWithOAuth>[0]['options'] = {
-        // Custom scheme: no SHA-256 verification needed, Chrome Custom Tabs closes automatically
-        redirectTo: 'co.kinsider.haru://auth/callback',
-        skipBrowserRedirect: true,
-      }
+      // Detect if running inside Capacitor native app
+      let isNative = false
+      try {
+        const { Capacitor } = await import('@capacitor/core')
+        isNative = Capacitor.isNativePlatform()
+      } catch {}
+
+      const options: Parameters<typeof supabase.auth.signInWithOAuth>[0]['options'] = isNative
+        ? {
+            // Native: custom scheme so Android intercepts callback without needing App Links
+            redirectTo: 'co.kinsider.haru://auth/callback',
+            skipBrowserRedirect: true,
+          }
+        : {
+            // Web: server-side callback via HTTPS, normal browser redirect
+            redirectTo: 'https://haruapp.vercel.app/auth/callback',
+          }
+
       if (provider === 'google') {
         options.queryParams = { access_type: 'offline', prompt: 'consent' }
       }
@@ -158,15 +171,12 @@ export default function LoginScreen() {
       const { data, error } = await supabase.auth.signInWithOAuth({ provider, options })
       if (error) throw error
 
-      if (data?.url) {
-        try {
-          const { Browser } = await import('@capacitor/browser')
-          await Browser.open({ url: data.url })
-        } catch {
-          // Web fallback
-          window.location.href = data.url
-        }
+      if (isNative && data?.url) {
+        const { Browser } = await import('@capacitor/browser')
+        await Browser.open({ url: data.url })
+        // After this, appUrlOpen listener handles the rest
       }
+      // Web: Supabase redirects automatically (no skipBrowserRedirect)
     } catch (err: any) {
       setError(err.message || 'Sign in failed. Please try again.')
       setLoading(null)
