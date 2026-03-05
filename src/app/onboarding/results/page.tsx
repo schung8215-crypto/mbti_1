@@ -11,10 +11,14 @@ interface MbtiPending {
   scores: Record<string, number>;
 }
 
+const T_CARD = 300;
+const T_CTA  = 1000;
+
 export default function OnboardingResultsPage() {
   const router = useRouter();
   const [pending, setPending] = useState<MbtiPending | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [phase, setPhase] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem("mbti-pending");
@@ -38,6 +42,12 @@ export default function OnboardingResultsPage() {
         setIsLoggedIn(!!session);
       });
     }
+
+    const timers = [
+      setTimeout(() => setPhase(1), T_CARD),
+      setTimeout(() => setPhase(2), T_CTA),
+    ];
+    return () => timers.forEach(clearTimeout);
   }, [router]);
 
   if (!pending) return null;
@@ -50,10 +60,17 @@ export default function OnboardingResultsPage() {
 
   return (
     <main className="min-h-screen flex flex-col justify-center p-4 py-8" style={{ background: '#f5f3ef' }}>
-      <div className="w-full max-w-md mx-auto space-y-3 animate-slide-up">
+      <div className="w-full max-w-md mx-auto space-y-3">
 
         {/* Card 1 — Personality result */}
-        <div className="bg-white rounded-3xl shadow-soft overflow-hidden">
+        <div
+          className="bg-white rounded-3xl shadow-soft overflow-hidden"
+          style={{
+            opacity: phase >= 1 ? 1 : 0,
+            transform: phase >= 1 ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.6s ease, transform 0.6s ease',
+          }}
+        >
           <div className="px-6 py-5 text-center relative" style={{ background: '#c67d5c' }}>
             <button
               onClick={() => router.push('/onboarding/questions')}
@@ -82,7 +99,15 @@ export default function OnboardingResultsPage() {
         </div>
 
         {/* Card 2 — Next step CTA */}
-        <div className="rounded-3xl shadow-soft overflow-hidden" style={{ background: '#faf8f5' }}>
+        <div
+          className="rounded-3xl shadow-soft overflow-hidden"
+          style={{
+            background: '#faf8f5',
+            opacity: phase >= 2 ? 1 : 0,
+            transform: phase >= 2 ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'opacity 0.6s ease, transform 0.6s ease',
+          }}
+        >
           <div className="p-5 space-y-4">
             <div>
               <p className="font-bold text-warm-900 text-base">Your personality type is just the beginning.</p>
@@ -91,7 +116,7 @@ export default function OnboardingResultsPage() {
 
             <ul className="space-y-2">
               {[
-                "Your Saju profile — element, animal sign, and yin/yang",
+                "Your Saju profile — element, animal & yin/yang",
                 "Daily insights shaped by your type, birth stem, and the 60-day cycle",
                 "Compatibility based on both personality and elemental dynamics",
               ].map((text, i) => (
