@@ -388,7 +388,7 @@ export default function LoginScreen() {
           }}>
             <p style={{ fontSize: 15, fontWeight: 600, color: '#166534', marginBottom: 6 }}>Check your inbox</p>
             <p style={{ fontSize: 13, color: '#4a7c59', lineHeight: 1.5 }}>
-              We sent a sign-in link to <strong>{email}</strong>. Tap it to continue.
+              We sent a sign-in link to <strong>{email}</strong>.
             </p>
             <button
               onClick={() => { setEmailSent(false); setEmail('') }}
