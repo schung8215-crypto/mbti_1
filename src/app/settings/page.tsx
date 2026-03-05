@@ -67,24 +67,20 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     setDeleting(true);
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    // Clear local data and navigate immediately
+    try {
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from("users").delete().eq("id", user.id);
+      }
+      await supabase.auth.signOut();
+    } catch {}
     localStorage.removeItem("mbti-saju-user");
     localStorage.removeItem("mbti-pending");
     localStorage.removeItem("mbti-saju-reflections");
-    // Fire-and-forget: delete server-side in background
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        fetch('/api/delete-account', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        }).catch(() => {});
-      }
-    });
-    supabase.auth.signOut().catch(() => {});
     window.location.href = "/onboarding/intro";
   };
 
