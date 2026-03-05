@@ -42,11 +42,12 @@ export async function GET(request: NextRequest) {
     .eq('id', data.session.user.id)
     .single()
 
-  // Returning user with profile — go to today (today page will restore localStorage from Supabase)
-  if (profile?.mbti_type) {
+  // Returning user with full profile — go to today (today page will restore localStorage from Supabase)
+  // Require BOTH mbti_type AND birth_year so that a deleted/reset account routes back to onboarding
+  if (profile?.mbti_type && profile?.birth_year) {
     return NextResponse.redirect(new URL('/today', origin))
   }
 
-  // New user — go to birthdate (birthdate page checks for mbti-pending and redirects to questions if missing)
+  // New or reset user — go to birthdate (birthdate page checks for mbti-pending and redirects to questions if missing)
   return NextResponse.redirect(new URL('/onboarding/birthdate', origin))
 }

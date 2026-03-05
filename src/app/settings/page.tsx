@@ -72,18 +72,30 @@ export default function SettingsPage() {
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from("users").update({
-          mbti_type: null,
-          onboarding_completed: false,
-          birth_year: null,
-          birth_month: null,
-          birth_day: null,
-          birth_element: null,
-          birth_yin_yang: null,
-          birth_animal: null,
-        }).eq("id", user.id);
+
+      // Get session token to call the server-side delete API
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        // Use API route — deletes from both users table and auth.users (service role)
+        await fetch("/api/delete-account", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+      } else {
+        // Fallback: clear profile data at minimum
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from("users").update({
+            mbti_type: null,
+            onboarding_completed: false,
+            birth_year: null,
+            birth_month: null,
+            birth_day: null,
+            birth_element: null,
+            birth_yin_yang: null,
+            birth_animal: null,
+          }).eq("id", user.id);
+        }
       }
       await supabase.auth.signOut();
     } catch {}
