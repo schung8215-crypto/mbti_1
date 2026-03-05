@@ -43,7 +43,7 @@ export default function OnboardingQuestionsPage() {
           })
         );
         setIsCalculating(true);
-        setTimeout(() => router.push("/onboarding/results"), 2800);
+        setTimeout(() => router.push("/onboarding/results"), 1500);
       }
     }, 200);
   };
