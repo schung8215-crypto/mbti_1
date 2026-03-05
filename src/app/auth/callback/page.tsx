@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/auth-helpers-nextjs'
 import { calculateUserBirthPillar } from '@/lib/bazi'
 
 export default function AuthCallbackPage() {
+  const [errorMsg, setErrorMsg] = useState('')
+
   useEffect(() => {
     const supabase = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -52,7 +54,8 @@ export default function AuthCallbackPage() {
       // PKCE flow — exchange code for session
       supabase.auth.exchangeCodeForSession(code).then(async ({ data, error }) => {
         if (error || !data.session) {
-          window.location.href = '/auth/login'
+          setErrorMsg(error?.message || 'no session returned')
+          setTimeout(() => { window.location.href = '/auth/login' }, 6000)
           return
         }
         await redirectAfterSession(data.session.user.id)
@@ -88,6 +91,7 @@ export default function AuthCallbackPage() {
           margin: '0 auto 12px', animation: 'spin 1s linear infinite',
         }} />
         <p style={{ color: '#9a8f89', fontSize: 14 }}>Signing you in…</p>
+        {errorMsg && <p style={{ color: '#c67d5c', fontSize: 13, marginTop: 12, maxWidth: 300 }}>Error: {errorMsg}</p>}
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     </main>
