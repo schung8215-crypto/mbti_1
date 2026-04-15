@@ -1,5 +1,4 @@
 import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -13,7 +12,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', origin))
   }
 
-  const cookieStore = await cookies()
+  // Use a temporary response to collect the cookies Supabase wants to set,
+  // then copy them onto the final redirect response so the browser receives them.
+  const tempResponse = NextResponse.next()
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,11 +22,11 @@ export async function GET(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return cookieStore.getAll()
+          return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options)
+            tempResponse.cookies.set(name, value, options)
           })
         },
       },
@@ -51,21 +52,29 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login?error=auth_failed', origin))
   }
 
-  // reuse session variable below
-  const data = { session }
-
   const { data: profile } = await supabase
     .from('users')
     .select('mbti_type, birth_year, birth_month, birth_day')
-    .eq('id', data.session.user.id)
+    .eq('id', session.user.id)
     .single()
 
-  // Returning user with full profile — go to today (today page will restore localStorage from Supabase)
-  // Require BOTH mbti_type AND birth_year so that a deleted/reset account routes back to onboarding
-  if (profile?.mbti_type && profile?.birth_year) {
-    return NextResponse.redirect(new URL('/today', origin))
-  }
+  // Require BOTH mbti_type AND birth_year so a deleted/reset account routes back to onboarding
+  const destination = (profile?.mbti_type && profile?.birth_year)
+    ? '/today'
+    : '/onboarding/birthdate'
 
-  // New or reset user — go to birthdate (birthdate page checks for mbti-pending and redirects to questions if missing)
-  return NextResponse.redirect(new URL('/onboarding/birthdate', origin))
+  const redirectResponse = NextResponse.redirect(new URL(destination, origin))
+
+  // Copy session cookies onto the redirect response so the browser stores them
+  tempResponse.cookies.getAll().forEach((cookie) => {
+    redirectResponse.cookies.set(cookie.name, cookie.value, {
+      httpOnly: cookie.httpOnly,
+      secure: cookie.secure,
+      sameSite: cookie.sameSite as 'lax' | 'strict' | 'none' | undefined,
+      maxAge: cookie.maxAge,
+      path: cookie.path,
+    })
+  })
+
+  return redirectResponse
 }

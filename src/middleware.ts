@@ -1,4 +1,4 @@
-import { createServerClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
@@ -87,9 +87,14 @@ export async function middleware(req: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + '/')
   )
   if (isProtectedRoute && !session) {
-    const redirectUrl = req.nextUrl.clone()
-    redirectUrl.pathname = '/auth/login'
-    return NextResponse.redirect(redirectUrl)
+    return NextResponse.redirect(new URL('/auth/login', req.url))
+  }
+
+  // Root redirect
+  if (pathname === '/') {
+    return NextResponse.redirect(
+      new URL(session ? '/today' : '/onboarding/intro', req.url)
+    )
   }
 
   return res
