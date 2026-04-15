@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "881992603838",
+    "project_id": "haru-4985b",
+    "storage_bucket": "haru-4985b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881992603838:android:1aaa7cac89d1faf8aae6ef",
+        "android_client_info": {
+          "package_name": "co.kinsider.haru"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd-aYoKLhSxjP_J7grgZJWY_l8vAnRnEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
